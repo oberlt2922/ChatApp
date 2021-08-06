@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "JxBeF31ZteSH22QDxPQaLgf5v1wpAcR7Fr9eihQZtxZ3za8H4uKW5hTa18Vu58+u5onP+U2r18vDtmAktrydYg==",
+  "dgSpecHash": "ibCNgIaZUNKmAjlcx4ZlqFR7Y2udaQEshBRO2/yYwFd6TnsEDCfsj400APzgHzEXZaDZgTGB/8p6B9T+F51y1A==",
   "success": true,
-  "projectFilePath": "C:\\Users\\oberl\\Documents\\ChatApp\\ChatApp\\ChatApp.csproj",
+  "projectFilePath": "C:\\Users\\oberl\\Documents\\GitHub\\ChatApp\\ChatApp\\ChatApp\\ChatApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\oberl\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\oberl\\.nuget\\packages\\microsoft.aspnetcore.cryptography.internal\\5.0.3\\microsoft.aspnetcore.cryptography.internal.5.0.3.nupkg.sha512",

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\oberl\\Documents\\ChatApp\\ChatApp\\ChatApp.csproj": {}
+    "C:\\Users\\oberl\\Documents\\GitHub\\ChatApp\\ChatApp\\ChatApp\\ChatApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\oberl\\Documents\\ChatApp\\ChatApp\\ChatApp.csproj": {
+    "C:\\Users\\oberl\\Documents\\GitHub\\ChatApp\\ChatApp\\ChatApp\\ChatApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\oberl\\Documents\\ChatApp\\ChatApp\\ChatApp.csproj",
+        "projectUniqueName": "C:\\Users\\oberl\\Documents\\GitHub\\ChatApp\\ChatApp\\ChatApp\\ChatApp.csproj",
         "projectName": "ChatApp",
-        "projectPath": "C:\\Users\\oberl\\Documents\\ChatApp\\ChatApp\\ChatApp.csproj",
+        "projectPath": "C:\\Users\\oberl\\Documents\\GitHub\\ChatApp\\ChatApp\\ChatApp\\ChatApp.csproj",
         "packagesPath": "C:\\Users\\oberl\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\oberl\\Documents\\ChatApp\\ChatApp\\obj\\",
+        "outputPath": "C:\\Users\\oberl\\Documents\\GitHub\\ChatApp\\ChatApp\\ChatApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Microsoft\\Xamarin\\NuGet\\"
