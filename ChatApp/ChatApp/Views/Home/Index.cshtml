@@ -1,8 +1,105 @@
-﻿@{
+﻿@model ChatApp.Models.AppUser
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@if (!SignInManager.IsSignedIn(User))
+{
+    <div class="text-center">
+        <h1 class="display-4">Welcome to my chat application.</h1>
+        <p>
+            This website allows users to create an account and chat with other users in real time.<br />
+            The register and login features use ASP.NET Identity<br />
+            SignalR is used to allow users to send and recieve messages in real time.<br />
+            Users can search for chatrooms to join, or create their own chatrooms and add disired users to the chatroom.<br />
+            The creator of a chatroom is the admin and can perform various actions on the chatroom.
+        </p>
+        <h4>Please Register and/or Login to continue</h4>
+    </div>
+}
+else
+{
+    <div class="container-fluid h-100">
+        <div class="row justify-content-center h-100">
+
+            <div class="col-md-4 col-xl-3 chat">
+                <div class="card mb-sm-3 mb-md-0 contacts_card">
+                    <div class="card-header">
+                        <div class="input-group">
+                            <input type="text" placeholder="Search..." name="" class="form-control search">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text search_btn"><i class="fas fa-search"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body contacts_body">
+                        <ui class="contacts">
+                            <li class="active">
+                                <div class="d-flex bd-highlight">
+                                    <div class="user_info col-11">
+                                        <div class="row col-12">
+                                            <span id="chatroom-name">Chatroom Name</span>
+                                        </div>
+                                        <p id="message-text-preview">Latest message</p>
+                                        <p>10:11 AM</p>
+                                    </div>
+                                </div>
+                            </li>
+                        </ui>
+                    </div>
+                    <div class="card-footer text-center">
+                        <button type="button" class="btn btn-primary rounded-pill" style="border-radius: 40px;">Create new chatroom</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-8 col-xl-6 chat">
+                <div class="card">
+                    <div class="card-header msg_head">
+                        <div class="d-flex bd-highlight">
+                            <div class="user_info">
+                                <span>Chatroom name</span>
+                                <p style="margin-bottom: 0;">1767 Messages</p>
+                                <p>10 Members</p>
+                            </div>
+                        </div>
+                        <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
+                        <div class="action_menu">
+                            <ul>
+                                <li><i class="fas fa-users"></i> Invite users</li>
+                                <li><i class="fas fa-ban"></i> Block user</li>
+                                <li><i class="fas fa-trash"></i> Delete chatroom</li>
+                                <li><i class="fas fa-sign-out-alt"></i> Leave chatroom</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-body msg_card_body">
+                        <div class="d-flex justify-content-start mb-4">
+                            <div class="msg_cotainer">
+                                Hi, how are you samim?
+                                <span class="msg_time">Sender Name 8:40 AM, Today</span>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end mb-4">
+                            <div class="msg_cotainer_send">
+                                Hi Khalid i am good tnx how about you?
+                                <span class="msg_time_send">8:55 AM, Today</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="input-group">
+                            <textarea name="" class="form-control type_msg" placeholder="Type your message..."></textarea>
+                            <div class="input-group-append">
+                                <span class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
