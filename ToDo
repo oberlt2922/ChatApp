@@ -98,3 +98,5 @@ To Do
 	limit chatroom name length to 40 characters
 	
 	change AppUser Messages from a hashset to a ICollection so that users can send duplicate messages, then add migration/update database
+	
+	use timestamps to see if there are new/unread messages in a chatroom
