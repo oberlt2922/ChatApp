@@ -49,10 +49,40 @@ To Do
 	
 	signalr
 		on login create connection
-		if group exists for chatroom, add connection to group
-		if group does not exist, create new group
-		when user leaves chatroom, remove connection from group
-		when user sends message, send to all users in group
+			connection name is user id
+			get all chatrooms for user
+				foreach chatroom
+					if group named after chatroom id exists
+						add connection to group
+					else
+						create group
+						add connection to group
+		when creating a chatroom 
+			create chatroom
+				add chatroom and members to db
+			create group named after chatroom id
+			add current user to group
+			if connections named after other members' ids exist
+				add those connections to group
+		when joining a chatroom
+			create new AppUserChatroom and add to db
+			if group exists
+				add connection to group
+			else
+				create group and add connection to group
+		when sending a message
+			add message to db
+			send message to all connections in group	
+		when user leaves chatroom
+			remove AppUserChatroom
+			remove connection from group
+		when deleting a chatroom
+			delete group
+			deleter chatroom and all messages (test for cascade delete)
+		when deleting account
+			delete AppUser
+			delete messages (test for cascade delete)
+			delete AppUserChatroom (test for cascade delete)
 	
 	logout
 		session.Clear()
@@ -64,3 +94,7 @@ To Do
 	hide password
 	
 	avoid showing current user in autocomplete
+	
+	limit chatroom name length to 40 characters
+	
+	change AppUser Messages from a hashset to a ICollection so that users can send duplicate messages, then add migration/update database
