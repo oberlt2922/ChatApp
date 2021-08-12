@@ -98,7 +98,7 @@ body {
 			overflow-y: auto;
 		}
 		.card-header{
-			border-radius: 15px 15px 0 0 !important;
+			border-radius: 15px !important;
 			border-bottom: 0 !important;
 		}
 	 .card-footer{
@@ -109,7 +109,7 @@ body {
 			align-content: center;
 		}
 		.search{
-			border-radius: 15px 0 0 15px !important;
+			border-radius: 15px !important;
 			background-color: rgba(0,0,0,0.3) !important;
 			border:0 !important;
 			color:white !important;

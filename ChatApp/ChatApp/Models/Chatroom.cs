@@ -10,6 +10,7 @@ namespace ChatApp.Models
     {
         public int ChatroomId { get; set; }
         [Required]
+        [MaxLength(40)]
         public string ChatroomName { get; set; }
         public string AdminId { get; set; }
         [Required]

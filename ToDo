@@ -1,3 +1,7 @@
+currentUser = await _userManager.GetUserAsync(User)
+User.Identity.Name
+
+
 To Do
 
 
@@ -41,14 +45,12 @@ To Do
 				delete chatroom
 		chatroom controller
 		
-	regex and error messages
+	input field validations
 	
 	Anti Forgery Token
 	
-	Password Hashing
-	
 	signalr
-		on login create connection
+		on login/register create connection
 			connection name is user id
 			get all chatrooms for user
 				foreach chatroom
@@ -83,20 +85,14 @@ To Do
 			delete AppUser
 			delete messages (test for cascade delete)
 			delete AppUserChatroom (test for cascade delete)
-	
-	logout
-		session.Clear()
-		redirect to home index
 		
 	no duplicate usernames
 		singleordefault()?
-		
-	hide password
 	
 	avoid showing current user in autocomplete
 	
 	limit chatroom name length to 40 characters
 	
-	change AppUser Messages from a hashset to a ICollection so that users can send duplicate messages, then add migration/update database
-	
 	use timestamps to see if there are new/unread messages in a chatroom
+	
+	on login 

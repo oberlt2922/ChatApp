@@ -15,10 +15,10 @@ namespace ChatApp.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly ApplicationDbContext _context;
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;
+        private readonly UserManager<AppUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, SignInManager<IdentityUser> signInManager, UserManager<IdentityUser> userManager)
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
         {
             _logger = logger;
             _context = context;
@@ -26,7 +26,7 @@ namespace ChatApp.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             if (!_signInManager.IsSignedIn(User))
             {
@@ -35,7 +35,8 @@ namespace ChatApp.Controllers
             else
             {
                 //get user and chatrooms then return user to view
-                return View();
+                AppUser currentUser = await _userManager.GetUserAsync(User);
+                return View(currentUser);
             }
         }
 

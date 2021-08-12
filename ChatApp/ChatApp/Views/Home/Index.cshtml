@@ -1,7 +1,7 @@
 ﻿@model ChatApp.Models.AppUser
 @using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<AppUser> SignInManager
+@inject UserManager<AppUser> UserManager
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -22,16 +22,50 @@
 }
 else
 {
+    <!--Create Chatroom Popup-->
+    <div class="modal fade bg-dark bg-transparent" id="newChatroomModal" tabindex="-1" role="dialog" aria-labelledby="newChatroomModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Create New Chatroom</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span class="text-white" aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="createChatroomForm" asp-action="Create">
+                        <div class="row justify-content-center">
+                            Public @Html.RadioButton("isPublic", "Public")
+                            Private @Html.RadioButton("isPublic", "Private")
+                        </div>
+                        <div class="row justify-content-center">
+                            <input type="text" name="chatroomName" class="bg-dark text-white" style="border-radius: 10px;" placeholder="Chatroom Name" />
+                        </div>
+                        <div class="row justify-content-center">
+                            <input type="text" id="txtSearchUsers" name="username" class="bg-dark text-white" style="border-radius: 10px;" placeholder="Chatroom member" />
+                        </div>
+                        <div id="addMemberBtn" class="row justify-content-center">
+                            <button type="button" class="btn btn-link" onclick="AddNewTextBox()">Add another member</button>
+                        </div>
+                        <div class="row justify-content-center">
+                            <input type="submit" class="btn btn-primary" value="Create" />
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Chatroom List-->
     <div class="container-fluid h-100">
         <div class="row justify-content-center h-100">
-
             <div class="col-md-4 col-xl-3 chat">
                 <div class="card mb-sm-3 mb-md-0 contacts_card">
                     <div class="card-header">
                         <div class="input-group">
-                            <input type="text" placeholder="Search..." name="" class="form-control search">
+                            <input id="txtSearchChatrooms" type="text" placeholder="Search Chatrooms..." name="" class="form-control search">
                             <div class="input-group-prepend">
-                                <span class="input-group-text search_btn"><i class="fas fa-search"></i></span>
+                                <span class="input-group-text search_btn"></span>
                             </div>
                         </div>
                     </div>
@@ -51,11 +85,11 @@ else
                         </ui>
                     </div>
                     <div class="card-footer text-center">
-                        <button type="button" class="btn btn-primary rounded-pill" style="border-radius: 40px;">Create new chatroom</button>
+                        <button type="button" class="btn btn-primary rounded-pill" style="border-radius: 40px;" data-toggle="modal" data-target="#newChatroomModal">Create new chatroom</button>
                     </div>
                 </div>
             </div>
-
+            <!--Chatroom-->
             <div class="col-md-8 col-xl-6 chat">
                 <div class="card">
                     <div class="card-header msg_head">
@@ -103,3 +137,7 @@ else
         </div>
     </div>
 }
+
+<script type="text/javascript">
+    var url = '@Url.Action("GoToChatroom", "ChatroomList", new { chatroomId =  "id"})';
+</script>

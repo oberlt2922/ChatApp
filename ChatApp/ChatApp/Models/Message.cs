@@ -21,8 +21,5 @@ namespace ChatApp.Models
         [Required]
         public int ChatroomId { get; set; }
         public virtual Chatroom Room { get; set; }
-
-        //delete message when chatroom is deleted
-        //do not delete message when user is deleted
     }
 }
