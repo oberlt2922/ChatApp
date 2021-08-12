@@ -7,6 +7,7 @@ using ChatApp.Data;
 using ChatApp.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace ChatApp.Controllers
@@ -34,10 +35,42 @@ namespace ChatApp.Controllers
             }
             else
             {
-                //get user and chatrooms then return user to view
                 AppUser currentUser = await _userManager.GetUserAsync(User);
+                currentUser = await _context.AppUser
+                        .Include(AppUser => AppUser.Chatrooms)
+                            .ThenInclude(Chatroom => Chatroom.Messages
+                                .OrderBy(Messages => Messages.Sent))
+                            .ThenInclude(Message => Message.Sender)
+                        .Include(AppUser => AppUser.Chatrooms)
+                            .ThenInclude(Chatroom => Chatroom.Members)
+                    .SingleAsync(AppUser => AppUser.Id == currentUser.Id);
                 return View(currentUser);
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateChatroom(string isPublic, string chatroomName, string[] username)
+        {
+            //set up validation
+            Chatroom room = new Chatroom();
+            AppUser currentUser = await _userManager.GetUserAsync(User);
+            room.AdminId = currentUser.Id;
+            room.ChatroomName = chatroomName;
+            room.IsPublic = (isPublic == "Public") ? true : false;
+            room.Members = new List<AppUser>();
+            room.Messages = new List<Message>();
+            room.Members.Add(currentUser);
+            foreach(string user in username)
+            {
+                AppUser member = await _context.AppUser.SingleOrDefaultAsync(a => a.UserName == user);
+                if(member != null)
+                {
+                    room.Members.Add(member);
+                }
+            }
+            _context.Chatroom.Add(room);
+            _context.SaveChanges();
+            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult Privacy()

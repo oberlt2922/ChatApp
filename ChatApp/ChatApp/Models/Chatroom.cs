@@ -16,7 +16,7 @@ namespace ChatApp.Models
         [Required]
         public bool IsPublic { get; set; }
 
-        public virtual ICollection<AppUser> Members { get; set; }
-        public virtual ICollection<Message> Messages { get; set; }
+        public virtual List<AppUser> Members { get; set; }
+        public virtual List<Message> Messages { get; set; }
     }
 }

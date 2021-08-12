@@ -295,9 +295,9 @@ body {
 	    text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
-        width:100%; // some width
+        width:100%;
 	}
-	@media(max-width: 576px){
+@media(max-width: 576px) {
 	.contacts_card{
 		margin-bottom: 15px !important;
 	}

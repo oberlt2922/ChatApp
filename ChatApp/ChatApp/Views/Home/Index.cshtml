@@ -33,23 +33,29 @@ else
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="createChatroomForm" asp-action="Create">
+                    <!--validate input
+                        check chatroom name length
+                        check if members exist
+                        autocomplete member textbox-->
+                    <form id="createChatroomForm" asp-action="CreateChatroom" method="post">
                         <div class="row justify-content-center">
-                            Public @Html.RadioButton("isPublic", "Public")
-                            Private @Html.RadioButton("isPublic", "Private")
+                            <label>Public</label>
+                            <input id="isPublic" name="isPublic" type="radio" style="margin-right: 15px; margin-left: 5px;" value="Public">
+                            <label>Private</label>
+                            <input id="isPublic" name="isPublic" type="radio" style="margin-left: 5px;" value="Private">
                         </div>
                         <div class="row justify-content-center">
                             <input type="text" name="chatroomName" class="bg-dark text-white" style="border-radius: 10px;" placeholder="Chatroom Name" />
                         </div>
                         <div class="row justify-content-center">
-                            <input type="text" id="txtSearchUsers" name="username" class="bg-dark text-white" style="border-radius: 10px;" placeholder="Chatroom member" />
+                            <input type="text" id="txtSearchUsers" name="username" class="bg-dark text-white" style="border-radius: 10px; margin-top:10px;" placeholder="Chatroom member" />
                         </div>
                         <div id="addMemberBtn" class="row justify-content-center">
                             <button type="button" class="btn btn-link" onclick="AddNewTextBox()">Add another member</button>
                         </div>
                         <div class="row justify-content-center">
-                            <input type="submit" class="btn btn-primary" value="Create" />
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <input id="createChatroomBtn" type="submit" class="btn btn-primary" value="Create" />
+                            <button type="button" class="btn btn-secondary offset-1" data-dismiss="modal">Close</button>
                         </div>
                     </form>
                 </div>
@@ -64,24 +70,28 @@ else
                     <div class="card-header">
                         <div class="input-group">
                             <input id="txtSearchChatrooms" type="text" placeholder="Search Chatrooms..." name="" class="form-control search">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text search_btn"></span>
-                            </div>
                         </div>
                     </div>
                     <div class="card-body contacts_body">
                         <ui class="contacts">
-                            <li class="active">
-                                <div class="d-flex bd-highlight">
-                                    <div class="user_info col-11">
-                                        <div class="row col-12">
-                                            <span id="chatroom-name">Chatroom Name</span>
+                            @foreach(Chatroom room in Model.Chatrooms)
+                            {
+                                <li><!--set class to active on click and populate chatroom
+                                        add bottom border to each list item-->
+                                    <div class="d-flex bd-highlight">
+                                        <div class="user_info col-11">
+                                            <div class="row col-12">
+                                                <span id="chatroom-name">@room.ChatroomName</span>
+                                            </div>
+                                            @if(room.Messages.Count > 0)
+                                            {
+                                                <p id="message-text-preview">@room.Messages[room.Messages.Count - 1].Text</p>
+                                                <p>@room.Messages[room.Messages.Count - 1].Sent</p>
+                                            }
                                         </div>
-                                        <p id="message-text-preview">Latest message</p>
-                                        <p>10:11 AM</p>
                                     </div>
-                                </div>
-                            </li>
+                                </li>
+                            }
                         </ui>
                     </div>
                     <div class="card-footer text-center">
