@@ -35,3 +35,62 @@ To Do
 			delete AppUser
 			delete messages (test for cascade delete)
 			delete AppUserChatroom (test for cascade delete)
+			
+			
+		
+		
+	Reference C# code
+		
+		using Microsoft.AspNetCore.SignalR;
+		using System.Threading.Tasks;
+
+		namespace SignalRChat.Hubs
+		{
+			public class ChatHub : Hub
+			{
+				public async Task SendMessage(string user, string message)
+				{
+					await Clients.All.SendAsync("ReceiveMessage", user, message);
+				}
+			}
+		}
+		
+	put these in startup.cs
+		services.AddSignalR();
+		endpoints.MapHub<ChatHub>("/chatHub");
+		
+	Reference JS code
+		"use strict";
+
+		var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+
+		//Disable send button until connection is established
+		document.getElementById("sendButton").disabled = true;
+
+		connection.on("ReceiveMessage", function (user, message) {
+			console.log("message recieved!!!!!!!");
+			var li = document.createElement("li");
+			document.getElementById("messagesList").appendChild(li);
+			// We can assign user-supplied strings to an element's textContent because it
+			// is not interpreted as markup. If you're assigning in any other way, you 
+			// should be aware of possible script injection concerns.
+			li.textContent = `${user} says ${message}`;
+		});
+
+		connection.start().then(function () {
+			console.log("connection started!!!!!!!");
+			document.getElementById("sendButton").disabled = false;
+		}).catch(function (err) {
+			return console.error(err.toString());
+		});
+
+		document.getElementById("sendButton").addEventListener("click", function (event) {
+			var user = document.getElementById("userInput").value;
+			var message = document.getElementById("messageInput").value;
+			connection.invoke("SendMessage", user, message).then(function () {
+				console.log("connection invoked");
+			}).catch (function (err) {
+				return console.error(err.toString());
+			});
+			event.preventDefault();
+		});
