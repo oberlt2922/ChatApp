@@ -1,54 +1,4 @@
-currentUser = await _userManager.GetUserAsync(User)
-User.Identity.Name
-
-
 To Do
-
-
-	chatrooms list view
-		search chatrooms
-			jquery autocomplete get chatrooms
-				only display public chatrooms
-				if no results then tell user
-			on select ask to join
-				if yes then add user to chatroom and redirect
-		create new chatroom button
-			public or private/public select list
-			chatroom name text box
-			add members
-				jquery autocomplete
-				add another user button
-					on click create new textbox
-			add chatroom to chatroom table
-			chatroom members table
-		list of chatrooms
-	
-	chatroom view
-		members
-		messages
-		text box
-		send button
-			use signalr
-			add message to db
-		back to chatrooms list
-		menu icon
-			leave chatroom
-				display message
-					if creator transfer admin power to new user
-				remove chatroom meber db
-				decrement chatroom members count db
-			add user to chatroom
-			block chatroom
-			if creator
-				remove user from chatroom
-				make chatroom private/public
-				delete chatroom
-		chatroom controller
-		
-	input field validations
-	
-	Anti Forgery Token
-	
 	signalr
 		on login/register create connection
 			connection name is user id
@@ -85,16 +35,3 @@ To Do
 			delete AppUser
 			delete messages (test for cascade delete)
 			delete AppUserChatroom (test for cascade delete)
-		
-	no duplicate usernames
-		singleordefault()?
-	
-	avoid showing current user in autocomplete
-	
-	limit chatroom name length to 40 characters
-	
-	use timestamps to see if there are new/unread messages in a chatroom
-	
-	on login 
-	
-	validations

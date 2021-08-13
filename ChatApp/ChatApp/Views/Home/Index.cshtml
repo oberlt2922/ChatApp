@@ -36,7 +36,9 @@ else
                     <!--validate input
                         check chatroom name length
                         check if members exist
-                        autocomplete member textbox-->
+                        autocomplete member textbox
+                            dont show current user
+                        display chatroom on create-->
                     <form id="createChatroomForm" asp-action="CreateChatroom" method="post">
                         <div class="row justify-content-center">
                             <label>Public</label>
@@ -62,7 +64,12 @@ else
             </div>
         </div>
     </div>
-    <!--Chatroom List-->
+    <!--Chatroom List
+        search/join chatrooms autocomplete
+            check if user is already a member of chatroom or if they are blocked
+        display chatroom on join
+        add new messages tag
+            add timestamp to AppUserChatroom table-->
     <div class="container-fluid h-100">
         <div class="row justify-content-center h-100">
             <div class="col-md-4 col-xl-3 chat">
@@ -74,16 +81,18 @@ else
                     </div>
                     <div class="card-body contacts_body">
                         <ui class="contacts">
-                            @foreach(Chatroom room in Model.Chatrooms)
+                            @foreach (Chatroom room in Model.Chatrooms)
                             {
-                                <li><!--set class to active on click and populate chatroom
+                                <li>
+                                    <!--set class="active" on click
+                                        display chatroom
                                         add bottom border to each list item-->
                                     <div class="d-flex bd-highlight">
                                         <div class="user_info col-11">
                                             <div class="row col-12">
                                                 <span id="chatroom-name">@room.ChatroomName</span>
                                             </div>
-                                            @if(room.Messages.Count > 0)
+                                            @if (room.Messages.Count > 0)
                                             {
                                                 <p id="message-text-preview">@room.Messages[room.Messages.Count - 1].Text</p>
                                                 <p>@room.Messages[room.Messages.Count - 1].Sent</p>
@@ -99,7 +108,18 @@ else
                     </div>
                 </div>
             </div>
-            <!--Chatroom-->
+            <!--Chatroom
+                invite users should only show up if chatroom is public or if user is admin and chatroom is private
+                    onclick display modal to enter usernames
+                    autocomplete usernames
+                        dont show current user or any users who are already members or blocked users
+                block user is only available to admin
+                    create blocked field in AppUserChatroom table
+                unblock user only available to admin
+                delete chatroom is only available to admin
+                    deleter chatroom and all messages (test for cascade delete)
+                leave chatroom is available to everyone
+                    remove current user from chatroom-->
             <div class="col-md-8 col-xl-6 chat">
                 <div class="card">
                     <div class="card-header msg_head">
@@ -147,7 +167,8 @@ else
         </div>
     </div>
 }
-
+<!--set url to navigate to when joining a chatroom
 <script type="text/javascript">
-    var url = '@Url.Action("GoToChatroom", "ChatroomList", new { chatroomId =  "id"})';
+    var url = 'Url.Action("GoToChatroom", "ChatroomList", new { chatroomId =  "id"})';
 </script>
+-->

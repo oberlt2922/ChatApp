@@ -51,7 +51,6 @@ namespace ChatApp.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateChatroom(string isPublic, string chatroomName, string[] username)
         {
-            //set up validation
             Chatroom room = new Chatroom();
             AppUser currentUser = await _userManager.GetUserAsync(User);
             room.AdminId = currentUser.Id;
