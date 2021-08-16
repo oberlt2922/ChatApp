@@ -38,7 +38,15 @@ else
                         check if members exist
                         autocomplete member textbox
                             dont show current user
-                        display chatroom on create-->
+                        change submit functionality
+                            onclick
+                                call ajax post function
+                                    calls create chatroom json result controller method
+                                        creates chatroom
+                                        adds members to chatroom
+                                        returns chatroom including members as json
+                                        calls function to add chatroom to chatroom list
+                                        calls function to display chatroom-->
                     <form id="createChatroomForm" asp-action="CreateChatroom" method="post">
                         <div class="row justify-content-center">
                             <label>Public</label>
@@ -66,8 +74,14 @@ else
     </div>
     <!--Chatroom List
         search/join chatrooms autocomplete
-            check if user is already a member of chatroom or if they are blocked
-        display chatroom on join
+            only display chatroom if current user isn't already a member of chatroom or if they are blocked
+            onclick ajax post function
+                call add join chatroom json result controller method
+                    gets chatroom including members messages and senders
+                    adds current user to members
+                    return chatroom as json
+                    calls function to add chatroom to chatroom list
+                    calls function to display chatroom
         add new messages tag
             add timestamp to AppUserChatroom table-->
     <div class="container-fluid h-100">
@@ -84,9 +98,16 @@ else
                             @foreach (Chatroom room in Model.Chatrooms)
                             {
                                 <li>
-                                    <!--set class="active" on click
-                                        display chatroom
-                                        add bottom border to each list item-->
+                                    <!--add bottom border to each list item
+                                            call display chatroom function
+                                            pass chatroom id and user id to function
+                                            set this.className = "active"
+                                            get chatroom by id
+                                                include messages
+                                                theninclude sender
+                                            display chatroom name, message count, member count
+                                            create and display messages foreach message
+                                                set message classname depending on UserId-->
                                     <div class="d-flex bd-highlight">
                                         <div class="user_info col-11">
                                             <div class="row col-12">
