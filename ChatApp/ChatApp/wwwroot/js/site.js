@@ -2,45 +2,18 @@
     //toggles the chatroom menu
 	$('#action_menu_btn').click(function () {
 		$('.action_menu').toggle();
-	});
+    });
+
+    //create extra text box for adding members to chatroom
+    $('#addMemberBtn').click(function () {
+        $('<div class="row justify-content-center"></div>').insertBefore('#addMemberBtn').append('<input type="text" id="txtSearchUsers" name="username" placeholder="Chatroom Member" style="border-radius: 10px; margin-top: 10px;" class="bg-dark text-white"></input>').append('<button type="button" class="close" style="margin-right: -23px; margin-left: 10px;"><span class="text-danger">x</span></button>');
+    });
+
+    //remove extra text boxes when x button is clicked
+    $("#createChatroomForm").on("click", "button.close", function (event) {
+        $(this).parent().remove();
+    });
 });
-
-//Adds an extra text box for adding members to a chatroom
-function AddNewTextBox() {
-    var form = document.getElementById("createChatroomForm");
-    var button = document.getElementById("addMemberBtn");
-    var closeButton = document.createElement("button");
-    var div = document.createElement("div");
-    var input = document.createElement("input");
-    var span = document.createElement("span");
-
-    input.type = "text";
-    input.id = "txtSearchUsers";
-    input.name = "username";
-    input.placeholder = "Chatroom member";
-    input.style = "border-radius: 10px; margin-top: 10px;"
-    input.className = "bg-dark text-white";
-
-    closeButton.type = "button";
-    closeButton.className = "close";
-    closeButton.style = "margin-right: -23px; margin-left: 10px;"
-    closeButton.ariaLabel = "Close";
-    closeButton.onclick = function () {
-        var parentElement = this.parentElement;
-        parentElement.remove();
-    }
-
-    span.ariaHidden = "true";
-    span.textContent = "x";
-    span.className = "text-danger";
-    closeButton.appendChild(span);
-
-    div.className = "row justify-content-center";
-    div.appendChild(input);
-    div.appendChild(closeButton);
-
-    form.insertBefore(div, button);
-}
 
 /*search chatrooms auto complete
  *  EVENT LISTENER WILL ONLY BE CREATED FOR TEXT BOXES THAT ALREADY EXIST
@@ -80,5 +53,4 @@ $(document).ready(function () {
             });
         }
     });
-});
-*/
+});*/
