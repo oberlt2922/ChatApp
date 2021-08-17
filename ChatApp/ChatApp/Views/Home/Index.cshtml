@@ -22,7 +22,7 @@
 }
 else
 {
-    <!--Create Chatroom Popup-->
+    <!--CREATE CHATROOM POPUP-->
     <div class="modal fade bg-dark bg-transparent" id="newChatroomModal" tabindex="-1" role="dialog" aria-labelledby="newChatroomModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content bg-dark text-white">
@@ -72,7 +72,7 @@ else
             </div>
         </div>
     </div>
-    <!--Chatroom List
+    <!--CHATROOM LIST
         search/join chatrooms autocomplete
             only display chatroom if current user isn't already a member of chatroom or if they are blocked
             onclick ajax post function
@@ -101,6 +101,7 @@ else
                                     <!--add bottom border to each list item
                                             call display chatroom function
                                             pass chatroom id and user id to function
+                                            get active li and remove "active" class
                                             set this.className = "active"
                                             get chatroom by id
                                                 include messages
@@ -129,7 +130,7 @@ else
                     </div>
                 </div>
             </div>
-            <!--Chatroom
+            <!--CHATROOM
                 invite users should only show up if chatroom is public or if user is admin and chatroom is private
                     onclick display modal to enter usernames
                     autocomplete usernames

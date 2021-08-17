@@ -1,4 +1,5 @@
 ﻿$(document).ready(function () {
+    //toggles the chatroom menu
 	$('#action_menu_btn').click(function () {
 		$('.action_menu').toggle();
 	});
@@ -20,7 +21,6 @@ function AddNewTextBox() {
     input.style = "border-radius: 10px; margin-top: 10px;"
     input.className = "bg-dark text-white";
 
-    //<span aria-hidden="true">&times;</span>
     closeButton.type = "button";
     closeButton.className = "close";
     closeButton.style = "margin-right: -23px; margin-left: 10px;"
@@ -43,6 +43,10 @@ function AddNewTextBox() {
 }
 
 /*search chatrooms auto complete
+ *  EVENT LISTENER WILL ONLY BE CREATED FOR TEXT BOXES THAT ALREADY EXIST
+ *  MUST CREATE EVENT LISTENER FOR TEXT BOXES CREATED AFTER DOCUMENT IS READY
+ *  RESEARCH EVENT DELEGATION SO THAT EVENT BEHAVIORS WILL BE EXTENDED TO NEW ELEMENTS WITHOUT HAVING
+ *  TO REBIND THEM
 $(document).ready(function () {
     $("#txtSearchChatrooms").autocomplete({
         source: function (request, response) {
