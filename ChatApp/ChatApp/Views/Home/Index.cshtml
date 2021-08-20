@@ -97,20 +97,20 @@ else
                         <ui class="contacts">
                             @foreach (Chatroom room in Model.Chatrooms)
                             {
-                                <li>
-                                    <!--add bottom border to each list item
-                                            call display chatroom function
-                                            pass chatroom id and user id to function
-                                            get active li and remove "active" class
-                                            set this.className = "active"
-                                            get chatroom by id
-                                                include messages
-                                                theninclude sender
-                                            display chatroom name, message count, member count
-                                            create and display messages foreach message
-                                                set message classname depending on UserId-->
+                                <!--call display chatroom function
+                                    pass chatroom id and user id to function
+                                    get active li and remove "active" class
+                                    set this.className = "active"
+                                    get chatroom by id
+                                        include messages
+                                        theninclude sender
+                                    display chatroom name, message count, member count
+                                    create and display messages foreach message
+                                        set message classname depending on UserId-->
+                                <li class="chatroomListItem" style="border-bottom-style:solid; border-bottom-color: lightslategrey; border-bottom-width: 1px;">
                                     <div class="d-flex bd-highlight">
                                         <div class="user_info col-11">
+                                            <input type="hidden" class="chatroom_id" value="@room.ChatroomId" />
                                             <div class="row col-12">
                                                 <span id="chatroom-name">@room.ChatroomName</span>
                                             </div>
@@ -188,9 +188,5 @@ else
             </div>
         </div>
     </div>
+    <input type="hidden" class="user_id" value="@Model.Id" />
 }
-<!--set url to navigate to when joining a chatroom
-<script type="text/javascript">
-    var url = 'Url.Action("GoToChatroom", "ChatroomList", new { chatroomId =  "id"})';
-</script>
--->

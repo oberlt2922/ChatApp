@@ -1,4 +1,18 @@
-﻿$(document).ready(function () {
+﻿var userId;
+
+$(document).ready(function () {
+    //get chatroom ajax function
+    function getChatroom(id) {
+        $.ajax({
+            type: 'POST',
+            url: '../Home/GetChatroom',
+            data: { 'chatroomId': id },
+            dataType: 'json'
+        }).done(function (json) {
+            console.log(json);
+        });
+    }
+
     //toggles the chatroom menu
 	$('#action_menu_btn').click(function () {
 		$('.action_menu').toggle();
@@ -10,8 +24,14 @@
     });
 
     //remove extra text boxes when x button is clicked
-    $("#createChatroomForm").on("click", "button.close", function (event) {
+    $('#createChatroomForm').on('click', 'button.close', function (event) {
         $(this).parent().remove();
+    });
+
+    $('ui.contacts').on('click', 'li.chatroomListItem', function (event) {
+        var chatroomId = $(this).find('.chatroom_id');
+        userId = $('.user_id');
+        getChatroom(chatroomId.val());
     });
 });
 

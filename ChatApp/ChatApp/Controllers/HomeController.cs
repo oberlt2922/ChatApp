@@ -40,9 +40,7 @@ namespace ChatApp.Controllers
                         .Include(AppUser => AppUser.Chatrooms)
                             .ThenInclude(Chatroom => Chatroom.Messages
                                 .OrderBy(Messages => Messages.Sent))
-                            .ThenInclude(Message => Message.Sender)
                         .Include(AppUser => AppUser.Chatrooms)
-                            .ThenInclude(Chatroom => Chatroom.Members)
                     .SingleAsync(AppUser => AppUser.Id == currentUser.Id);
                 return View(currentUser);
             }
@@ -71,6 +69,19 @@ namespace ChatApp.Controllers
             _context.SaveChanges();
             return RedirectToAction("Index", "Home");
         }
+
+        [HttpPost]
+        public JsonResult GetChatroom(string chatroomId)
+        {
+            Chatroom chatroom = _context.Chatroom
+                                    .Include(Chatroom => Chatroom.Messages)
+                                        .ThenInclude(Messages => Messages.Sender)
+                                .Single(Chatroom => Chatroom.ChatroomId == Convert.ToInt32(chatroomId));
+            return Json(chatroom);
+        }
+
+
+
 
         public IActionResult Privacy()
         {
