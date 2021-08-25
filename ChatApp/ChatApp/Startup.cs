@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SignalRChat.Hubs;
 
 namespace ChatApp
 {
@@ -42,6 +43,7 @@ namespace ChatApp
             services.AddControllersWithViews()
                 .AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddRazorPages();
+            services.AddSignalR();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,6 +74,7 @@ namespace ChatApp
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
+                endpoints.MapHub<ChatHub>("/chatHub");
             });
         }
     }

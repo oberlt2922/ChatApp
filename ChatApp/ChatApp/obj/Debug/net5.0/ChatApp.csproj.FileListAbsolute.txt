@@ -251,3 +251,4 @@ C:\Users\oberl\Documents\GitHub\ChatApp\ChatApp\ChatApp\obj\Debug\net5.0\Razor\A
 C:\Users\oberl\Documents\GitHub\ChatApp\ChatApp\ChatApp\bin\Debug\net5.0\Microsoft.AspNetCore.JsonPatch.dll
 C:\Users\oberl\Documents\GitHub\ChatApp\ChatApp\ChatApp\bin\Debug\net5.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
 C:\Users\oberl\Documents\GitHub\ChatApp\ChatApp\ChatApp\bin\Debug\net5.0\Newtonsoft.Json.Bson.dll
+C:\Users\oberl\Documents\GitHub\ChatApp\ChatApp\ChatApp\bin\Debug\net5.0\libman.json
