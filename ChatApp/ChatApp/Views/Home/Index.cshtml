@@ -97,16 +97,6 @@ else
                         <ui class="contacts">
                             @foreach (Chatroom room in Model.Chatrooms)
                             {
-                                <!--call display chatroom function
-                                    pass chatroom id and user id to function
-                                    get active li and remove "active" class
-                                    set this.className = "active"
-                                    get chatroom by id
-                                        include messages
-                                        theninclude sender
-                                    display chatroom name, message count, member count
-                                    create and display messages foreach message
-                                        set message classname depending on UserId-->
                                 <li class="chatroomListItem" style="border-bottom-style:solid; border-bottom-color: lightslategrey; border-bottom-width: 1px;">
                                     <div class="d-flex bd-highlight">
                                         <div class="user_info col-11">
@@ -147,9 +137,9 @@ else
                     <div class="card-header msg_head">
                         <div class="d-flex bd-highlight">
                             <div class="user_info">
-                                <span>Chatroom name</span>
-                                <p style="margin-bottom: 0;">1767 Messages</p>
-                                <p>10 Members</p>
+                                <span class="chat_chatroom_name">Chatroom name</span>
+                                <p class="message_count" style="margin-bottom: 0;">1767 Messages</p>
+                                <p class="members_count">10 Members</p>
                             </div>
                         </div>
                         <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
