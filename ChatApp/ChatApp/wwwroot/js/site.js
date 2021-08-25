@@ -1,6 +1,7 @@
 ﻿var userId;
 
 $(document).ready(function () {
+    //AJAX FUNCTIONS
     //get chatroom ajax function
     function getChatroom(id) {
         $.ajax({
@@ -13,6 +14,8 @@ $(document).ready(function () {
         });
     }
 
+
+    //EVENT LISTENERS
     //toggles the chatroom menu
 	$('#action_menu_btn').click(function () {
 		$('.action_menu').toggle();
