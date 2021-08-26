@@ -94,3 +94,45 @@ To Do
 			});
 			event.preventDefault();
 		});
+		
+		
+
+/*search chatrooms auto complete
+ *  EVENT LISTENER WILL ONLY BE CREATED FOR TEXT BOXES THAT ALREADY EXIST
+ *  MUST CREATE EVENT LISTENER FOR TEXT BOXES CREATED AFTER DOCUMENT IS READY
+ *  RESEARCH EVENT DELEGATION SO THAT EVENT BEHAVIORS WILL BE EXTENDED TO NEW ELEMENTS WITHOUT HAVING
+ *  TO REBIND THEM
+$(document).ready(function () {
+    $("#txtSearchChatrooms").autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: '/ChatroomList/AutoCompleteChatrooms',
+                type: 'POST',
+                cache: false,
+                data: { "prefix": request.term },
+                dataType: 'json',
+                success: function (data) {
+                    response($.map(data, function (item) {
+                        return {
+                            chatroomId: data.chatroomId,
+                            chatroomName: data.chatroomName,
+                            data: item
+                        }
+                    }))
+                }
+            });
+        },
+        minLength: 2,
+        select: function (event, ui) {
+            $.confirm({
+                title: 'Join Chatroom',
+                content: 'Would you like to join the chatroom \"' + ui.item.chatroomName + '\"\?',
+                buttons: {
+                    confirm: function () {
+                        window.location.href = url.replace('id', ui.item.chatroomId);
+                    }
+                }
+            });
+        }
+    });
+});*/
