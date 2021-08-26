@@ -179,4 +179,9 @@ else
         </div>
     </div>
     <input type="hidden" class="user_id" value="@Model.Id" />
+    @section Scripts
+    {
+        <script src="~/js/signalr/dist/browser/signalr.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+    }
 }
