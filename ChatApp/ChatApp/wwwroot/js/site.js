@@ -4,45 +4,32 @@
 var userId = $('#active_user_id').val();
 var username = $('#active_username').val();
 
-//SIGNALR CODE
-//create signalr connection and disable send button until connection starts and the dom is ready
-var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
-$('.send_btn').prop('disabled', true);
+$(document).ready(function () {  
+    //SIGNALR CODE
+    //create signalr connection and disable send button until connection starts and the dom is ready
+    var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+    $('.send_btn').prop('disabled', true);
 
-//when a different user creates a new chatroom and adds the current user
-//the chatroom is retrieved and displayed
-connection.on("AddNewChatroom", function (chatroomId) {
-    $.ajax({
-        type: 'POST',
-        url: '../Home/GetChatroom',
-        data: { 'chatroomId': id },
-        dataType: 'json'
-    }).done(function (result) {
-        addChatroomToList(result);
-        displayChatroom(result);
-    });
-});
-
-//enable send button when connection is started
-connection.start().then(function () {
-    console.log("connection started!!!!!!!");
-    //add user to logged in users collection
-    connection.invoke('AddConnection', userId).catch(function (err) {
-        return console.error(err.toString());
-    });
-    //add user's connection to each chatroom group
-    $('.chatroom_id').each(function (index) {
-        connection.invoke('AddCurrentUserToGroup', $(this).val()).catch(function (err) {
+    //when a new chatroom is created each member will be added to the group
+    connection.on('AddToNewGroup', function (chatroomId) {
+        connection.invoke('AddCurrentUserToNewGroup', chatroomId, userId).catch(function (err) {
             return console.error(err.toString());
         });
     });
-    $('.send_btn').prop('disabled', false);
-}).catch(function (err) {
-    return console.error(err.toString());
-});
 
+    //after the current user is added to a newly created chatroom
+    //the chatroom will be displayed in the chatroom list
+    connection.on("AddNewChatroomToList", function (chatroomId) {
+        $.ajax({
+            type: 'POST',
+            url: '../Home/GetChatroom',
+            data: { 'chatroomId': chatroomId },
+            dataType: 'json'
+        }).done(function (result) {
+            addChatroomToList(result);
+        });
+    });
 
-$(document).ready(function () {  
     //DOM FUNCTIONS
     //display chatroom function to be called when chatroom is clicked or created
     function displayChatroom(chatroom) {
@@ -109,11 +96,11 @@ $(document).ready(function () {
             data: { 'isPublic': isPublic, 'chatroomName': chatroomName, 'username': username },
             datatype: 'json'
         }).done(function (result) {
-            addChatroomToList(result);
-            displayChatroom(result);
-            connection.invoke('AddMembersToGroup', result.chatroomId, result.members).catch(function (err) {
+            var members = JSON.stringify(result.members);
+            connection.invoke('AddMembersToGroup', result.chatroomId.toString(), members).catch(function (err) {
                 return console.error(err.toString());
             });
+            displayChatroom(result);
         });
     }
 
@@ -142,7 +129,7 @@ $(document).ready(function () {
         getChatroom(chatroomId.val());
     });
 
-    //calls create chatroom
+    //calls create chatroom and clears the form in the popup
     $('#createChatroomBtn').on('click', function (event) {
         event.preventDefault();
         var isPublic = $('input[name="isPublic"]:checked', '#createChatroomForm').val()
@@ -156,5 +143,22 @@ $(document).ready(function () {
             $(button).parent().remove();
         });
         $('input[name="username"]').val('');
+    });
+
+    //START SIGNALR CONNECTION
+    //the connection must started after the connection.on event listeners are defined
+    //enable send button when connection is started
+    connection.start().then(function () {
+        console.log("connection started!!!!!!!");
+        //add user's connection to each chatroom group
+        $('.chatroom_id').each(function (index) {
+            connection.invoke('AddCurrentUserToGroup', $(this).val()).catch(function (err) {
+                return console.error(err.toString());
+            });
+            console.log('added user to chatroom ' + $(this).val());
+        });
+        $('.send_btn').prop('disabled', false);
+    }).catch(function (err) {
+        return console.error(err.toString());
     });
 });
