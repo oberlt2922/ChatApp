@@ -1,7 +1,6 @@
 To Do
 	signalr
 		on login/register create connection
-			connection name is user id
 			get all chatrooms for user
 				foreach chatroom
 					if group named after chatroom id exists

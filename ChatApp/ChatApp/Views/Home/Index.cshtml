@@ -47,7 +47,7 @@ else
                                         returns chatroom including members as json
                                         calls function to add chatroom to chatroom list
                                         calls function to display chatroom-->
-                    <form id="createChatroomForm" asp-action="CreateChatroom" method="post">
+                    <form id="createChatroomForm">
                         <div class="row justify-content-center">
                             <label>Public</label>
                             <input id="isPublic" name="isPublic" type="radio" style="margin-right: 15px; margin-left: 5px;" value="Public">
@@ -64,7 +64,7 @@ else
                             <button type="button" class="btn btn-link">Add another member</button>
                         </div>
                         <div class="row justify-content-center">
-                            <input id="createChatroomBtn" type="submit" class="btn btn-primary" value="Create" />
+                            <input id="createChatroomBtn" type="submit" class="btn btn-primary" data-dismiss="modal" value="Create" />
                             <button type="button" class="btn btn-secondary offset-1" data-dismiss="modal">Close</button>
                         </div>
                     </form>
@@ -178,7 +178,9 @@ else
             </div>
         </div>
     </div>
-    <input type="hidden" class="user_id" value="@Model.Id" />
+    <input type="hidden" id="active_user_id" value="@Model.Id" />
+    <input type="hidden" id="active_username" value="@Model.UserName" />
+    <input type="hidden" id="active_chatroom_id" />
     @section Scripts
     {
         <script src="~/js/signalr/dist/browser/signalr.js"></script>

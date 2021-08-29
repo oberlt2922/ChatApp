@@ -46,7 +46,7 @@ namespace ChatApp.Controllers
             }
         }
 
-        [HttpPost]
+        /*[HttpPost]
         public async Task<IActionResult> CreateChatroom(string isPublic, string chatroomName, string[] username)
         {
             Chatroom room = new Chatroom();
@@ -68,13 +68,37 @@ namespace ChatApp.Controllers
             _context.Chatroom.Add(room);
             _context.SaveChanges();
             return RedirectToAction("Index", "Home");
+        }*/
+
+        [HttpPost]
+        public async Task<JsonResult> CreateChatroom(string isPublic, string chatroomName, string[] username)
+        {
+            Chatroom room = new Chatroom();
+            AppUser currentUser = await _userManager.GetUserAsync(User);
+            room.AdminId = currentUser.Id;
+            room.ChatroomName = chatroomName;
+            room.IsPublic = (isPublic == "Public") ? true : false;
+            room.Members = new List<AppUser>();
+            room.Messages = new List<Message>();
+            room.Members.Add(currentUser);
+            foreach (string user in username)
+            {
+                AppUser member = await _context.AppUser.SingleOrDefaultAsync(a => a.UserName == user);
+                if (member != null)
+                {
+                    room.Members.Add(member);
+                }
+            }
+            _context.Chatroom.Add(room);
+            _context.SaveChanges();
+            return GetChatroom(room.ChatroomId.ToString());
         }
 
         [HttpPost]
         public JsonResult GetChatroom(string chatroomId)
         {
             Chatroom chatroom = _context.Chatroom
-                .Include(Chatroom => Chatroom.Messages)
+                .Include(Chatroom => Chatroom.Messages.OrderBy(Message => Message.Sent))
                     .ThenInclude(Messages => Messages.Sender)
                 .Include(Chatroom => Chatroom.Members)
                 .Single(Chatroom => Chatroom.ChatroomId == Convert.ToInt32(chatroomId));
