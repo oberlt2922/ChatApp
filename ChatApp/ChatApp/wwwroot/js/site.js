@@ -57,8 +57,11 @@ $(document).ready(function () {
 
     //add chatroom to list
     function addChatroomToList(chatroom) {
-        $('.active').removeClass('active');
-        var listItem = $('<li class="chatroomListItem active" style="border-bottom-style:solid; border-bottom-color: lightslategrey; border-bottom-width: 1px;"></li>');
+        var listItem = $('<li class="chatroomListItem" style="border-bottom-style:solid; border-bottom-color: lightslategrey; border-bottom-width: 1px;"></li>');
+        if (chatroom.adminId == userId) {
+            $('.active').removeClass('active');
+            $(listItem).addClass('active');
+        }
         var div1 = $('<div class="d-flex bd-highlight"></div>');
         var div2 = $('<div class="user_info col-11"></div>');
         var chatIdInput = $('<input type="hidden" class="chatroom_id" value="' + chatroom.chatroomId + '" />');

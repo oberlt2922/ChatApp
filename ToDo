@@ -135,3 +135,10 @@ $(document).ready(function () {
         }
     });
 });*/
+
+
+//Things to do
+	User should not be able to add themselves when creating a new chatroom
+	Footer gets in the way when window size is adjusted
+	Validation
+	Anti Forgery Tokens
