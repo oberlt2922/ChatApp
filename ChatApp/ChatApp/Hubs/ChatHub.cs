@@ -3,11 +3,22 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using ChatApp.Models;
 using Newtonsoft.Json;
+using ChatApp.Data;
+using System;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace SignalRChat.Hubs
 {
     public class ChatHub : Hub
     {
+        private readonly ApplicationDbContext _context;
+
+        public ChatHub(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         /// <summary>
         /// This method is called when a user signs in
         /// The user is added to the groups of every chatroom that they are already a member of
@@ -35,13 +46,38 @@ namespace SignalRChat.Hubs
         /// This method is called when a new chatroom is created
         /// The current user is added to the new chatroom group, then the new chatroom is displayed in the chatroom list
         /// </summary>
-        /// <param name="chatroomId"></param>
-        /// <param name="userId"></param>
-        /// <returns></returns>
         public async Task AddCurrentUserToNewGroup(string chatroomId, string userId)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, chatroomId);
             await Clients.User(userId).SendAsync("AddNewChatroomToList", chatroomId);
+        }
+
+        //Add message to chatroom and send it to group
+        public async Task SendMessage(string messageText, string userId, string chatroomId)
+        {
+            AppUser currentUser = await _context.AppUser.SingleOrDefaultAsync(user => user.Id == userId);
+            Chatroom room = await _context.Chatroom.SingleOrDefaultAsync(room => room.ChatroomId == Convert.ToInt32(chatroomId));
+            Message message = new Message();
+            message.Username = currentUser.UserName;
+            message.Text = messageText;
+            message.Sent = DateTime.Now;
+            message.UserId = currentUser.Id;
+            message.Sender = currentUser;
+            message.ChatroomId = room.ChatroomId;
+            message.Room = room;
+
+            _context.Message.Add(message);
+            room.Messages.Add(message);
+            await _context.SaveChangesAsync();
+
+            try
+            {
+                await Clients.Group(room.ChatroomId.ToString()).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(message));
+            }
+            catch(Exception ex)
+            {
+                await Clients.User(userId).SendAsync("DisplayError", ex.Message);
+            }
         }
     }
 }

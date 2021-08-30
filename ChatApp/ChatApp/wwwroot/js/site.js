@@ -30,6 +30,16 @@ $(document).ready(function () {
         });
     });
 
+    //Receive a message and add it to the dom
+    connection.on("ReceiveMessage", function (messageJson) {
+        var message = $.parseJSON(messageJson);
+        displayMessage(message);
+    });
+
+    connection.on('DisplayError', function (errorMessage) {
+        console.log(errorMessage);
+    });
+
     //DOM FUNCTIONS
     //display chatroom function to be called when chatroom is clicked or created
     function displayChatroom(chatroom) {
@@ -38,21 +48,27 @@ $(document).ready(function () {
         $('.members_count').text(chatroom.members.length + ' Members');
         $('.msg_card_body').empty();
         $.each(chatroom.messages, function (index, message) {
-            var div = '<div class="d-flex mb-4"></div>';
-            var msgContainer = '<div></div>';
-            if (message.Sender.id == userId) {
-                div.addClass('justify-content-end');
-                msgContainer.addClass('msg_cotainer_send');
-            }
-            else {
-                div.addClass('justify-content-start');
-                msgContainer.addClass('msg_cotainer');
-            }
-            $(msgContainer).html(message.text + '<span class="msg_time">' + message.Sender.userName + ' ' + message.sent + '</span>')
-            div.append(msgContainer);
-            $('.msg_card_body').append(div);
+            displayMessage(message);
         });
         $('#active_chatroom_id').val(chatroom.chatroomId);
+    }
+
+    //displays a message with the correct classes depending on the current user and the message's sender
+    function displayMessage(message) {
+        var div = $('<div class="d-flex mb-4"></div>');
+        var msgContainer = $('<div></div>');
+        if (message.sender.id == userId) {
+            $(div).addClass('justify-content-end');
+            $(msgContainer).addClass('msg_cotainer_send');
+            $(msgContainer).html(message.text + '<span class="msg_time">' + moment(message.sent).calendar() + '</span>')
+        }
+        else {
+            $(div).addClass('justify-content-start');
+            $(msgContainer).addClass('msg_cotainer');
+            $(msgContainer).html(message.text + '<span class="msg_time">' + message.sender.userName + ' ' + moment(message.sent).calendar() + '</span>')
+        }
+        $(div).append(msgContainer);
+        $('.msg_card_body').append(div);
     }
 
     //add chatroom to list
@@ -146,6 +162,16 @@ $(document).ready(function () {
             $(button).parent().remove();
         });
         $('input[name="username"]').val('');
+    });
+
+    //calls send message
+    $('#send-msg-btn').on('click', function (event) {
+        event.preventDefault();
+        var messageText = $('textarea[name="new-message"]').val();
+        var chatroomId = $('#active_chatroom_id').val();
+        connection.invoke('SendMessage', messageText, userId.toString(), chatroomId.toString()).catch(function (err) {
+            return console.error(err.toString());
+        });
     });
 
     //START SIGNALR CONNECTION

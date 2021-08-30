@@ -37,16 +37,7 @@ else
                         check chatroom name length
                         check if members exist
                         autocomplete member textbox
-                            dont show current user
-                        change submit functionality
-                            onclick
-                                call ajax post function
-                                    calls create chatroom json result controller method
-                                        creates chatroom
-                                        adds members to chatroom
-                                        returns chatroom including members as json
-                                        calls function to add chatroom to chatroom list
-                                        calls function to display chatroom-->
+                            dont show current user-->
                     <form id="createChatroomForm">
                         <div class="row justify-content-center">
                             <label>Public</label>
@@ -168,9 +159,9 @@ else
                     </div>
                     <div class="card-footer">
                         <div class="input-group">
-                            <textarea name="" class="form-control type_msg" placeholder="Type your message..."></textarea>
+                            <textarea name="new-message" class="form-control type_msg" placeholder="Type your message..."></textarea>
                             <div class="input-group-append">
-                                <span class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></span>
+                                <span id="send-msg-btn" class="input-group-text send_btn"><i class="fas fa-location-arrow"></i></span>
                             </div>
                         </div>
                     </div>
@@ -183,6 +174,7 @@ else
     <input type="hidden" id="active_chatroom_id" />
     @section Scripts
     {
+        <script src="~/lib/moment.js/moment.js"></script>
         <script src="~/js/signalr/dist/browser/signalr.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     }

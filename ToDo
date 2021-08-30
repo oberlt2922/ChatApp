@@ -138,6 +138,8 @@ $(document).ready(function () {
 
 
 //Things to do
+	styling for message sent time
+	automatically display most recent chatroom
 	User should not be able to add themselves when creating a new chatroom
 	Footer gets in the way when window size is adjusted
 	Validation
