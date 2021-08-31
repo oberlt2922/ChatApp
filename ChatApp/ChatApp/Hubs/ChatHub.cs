@@ -70,9 +70,14 @@ namespace SignalRChat.Hubs
             room.Messages.Add(message);
             await _context.SaveChangesAsync();
 
+            MessageVM messagevm = new MessageVM();
+            messagevm.UserId = message.UserId;
+            messagevm.Username = message.Username;
+            messagevm.Sent = message.Sent;
+            messagevm.Text = message.Text;
             try
             {
-                await Clients.Group(room.ChatroomId.ToString()).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(message));
+                await Clients.Group(room.ChatroomId.ToString()).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(messagevm));
             }
             catch(Exception ex)
             {

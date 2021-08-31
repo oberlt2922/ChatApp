@@ -13,6 +13,7 @@ namespace ChatApp.Models
             Messages = new HashSet<Message>();
             Chatrooms = new HashSet<Chatroom>();
         }
+
         public virtual ICollection<Message> Messages { get; set; }
         public virtual ICollection<Chatroom> Chatrooms { get; set; }
     }

@@ -75,7 +75,6 @@ namespace ChatApp.Controllers
         {
             Chatroom chatroom = _context.Chatroom
                 .Include(Chatroom => Chatroom.Messages.OrderBy(Message => Message.Sent))
-                    .ThenInclude(Messages => Messages.Sender)
                 .Include(Chatroom => Chatroom.Members)
                 .Single(Chatroom => Chatroom.ChatroomId == Convert.ToInt32(chatroomId));
             return Json(chatroom);

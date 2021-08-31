@@ -57,7 +57,7 @@ $(document).ready(function () {
     function displayMessage(message) {
         var div = $('<div class="d-flex mb-4"></div>');
         var msgContainer = $('<div></div>');
-        if (message.sender.id == userId) {
+        if (message.userId == userId) {
             $(div).addClass('justify-content-end');
             $(msgContainer).addClass('msg_cotainer_send');
             $(msgContainer).html(message.text + '<span class="msg_time">' + moment(message.sent).calendar() + '</span>')
@@ -65,7 +65,7 @@ $(document).ready(function () {
         else {
             $(div).addClass('justify-content-start');
             $(msgContainer).addClass('msg_cotainer');
-            $(msgContainer).html(message.text + '<span class="msg_time">' + message.sender.userName + ' ' + moment(message.sent).calendar() + '</span>')
+            $(msgContainer).html(message.text + '<span class="msg_time">' + message.userName + ' ' + moment(message.sent).calendar() + '</span>')
         }
         $(div).append(msgContainer);
         $('.msg_card_body').append(div);
@@ -172,6 +172,7 @@ $(document).ready(function () {
         connection.invoke('SendMessage', messageText, userId.toString(), chatroomId.toString()).catch(function (err) {
             return console.error(err.toString());
         });
+        $('textarea[name="new-message"]').val('');
     });
 
     //START SIGNALR CONNECTION
