@@ -138,9 +138,12 @@ $(document).ready(function () {
 
 
 //Things to do
-	styling for message sent time
+	message from other users says undefined instead of the username
+		also sometimes the message sender and time info is two lines instead of one and is on top of the message itself instead of underneath.
+	Footer gets in the way when window size is adjusted
+	Chat does not automatically scroll down when new messages come through
+	apply custom scroll bar
 	automatically display most recent chatroom
 	User should not be able to add themselves when creating a new chatroom
-	Footer gets in the way when window size is adjusted
 	Validation
 	Anti Forgery Tokens

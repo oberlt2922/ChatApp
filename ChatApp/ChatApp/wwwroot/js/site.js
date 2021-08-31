@@ -153,7 +153,10 @@ $(document).ready(function () {
         event.preventDefault();
         var isPublic = $('input[name="isPublic"]:checked', '#createChatroomForm').val()
         var chatroomName = $('input[name="chatroomName"]').val();
-        var members = $('#createChatroomForm').find('input[name="username"]').val();
+        var members = new Array();
+        $('input[name="username"]').each(function () {
+            members.push($(this).val());
+        });
         createChatroom(isPublic, chatroomName, members);
         $('input[name="isPublic"]:checked', '#createChatroomForm').prop('checked', false);
         $('input[name="chatroomName"]').val('');
