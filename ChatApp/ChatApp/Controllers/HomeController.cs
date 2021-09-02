@@ -80,6 +80,45 @@ namespace ChatApp.Controllers
             return Json(chatroom);
         }
 
+        //get chatrooms by prefix where chatroom is public and user is not already a member
+        [HttpPost]
+        public async Task<JsonResult> AutoCompleteChatroom(string prefix, string userId)
+        {
+            List<Chatroom> returnList = new List<Chatroom>();
+            List<Chatroom> chatrooms = await _context.Chatroom
+                .Include(Chatroom => Chatroom.Members)
+                .Where(Chatroom => Chatroom.ChatroomName.StartsWith(prefix) && Chatroom.IsPublic == true)
+                .ToListAsync();
+            foreach(Chatroom chatroom in chatrooms)
+            {
+                bool userIsMember = false;
+                foreach(AppUser member in chatroom.Members)
+                {
+                    if(member.Id == userId)
+                    {
+                        userIsMember = true;
+                        break;
+                    }
+                }
+                if (userIsMember == false)
+                    returnList.Add(chatroom);
+            }
+            return Json(returnList);
+        }
+
+        //join chatroom accept chatroom id and user id return chatroom json result
+        public async Task<JsonResult> JoinChatroom(string chatroomId)
+        {
+            Chatroom chatroom = _context.Chatroom
+                .Include(Chatroom => Chatroom.Messages.OrderBy(Message => Message.Sent))
+                .Include(Chatroom => Chatroom.Members)
+                .Single(Chatroom => Chatroom.ChatroomId == Convert.ToInt32(chatroomId));
+            AppUser currentUser = await _userManager.GetUserAsync(User);
+            chatroom.Members.Add(currentUser);
+            _context.SaveChanges();
+            return Json(chatroom);
+        }
+
 
 
 

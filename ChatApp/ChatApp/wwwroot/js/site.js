@@ -43,6 +43,7 @@ $(document).ready(function () {
     //DOM FUNCTIONS
     //display chatroom function to be called when chatroom is clicked or created
     function displayChatroom(chatroom) {
+        $("#txtSearchChatrooms").val('');
         $('.chat_chatroom_name').text(chatroom.chatroomName);
         $('.message_count').text(chatroom.messages.length + ' Messages');
         $('.members_count').text(chatroom.members.length + ' Members');
@@ -122,6 +123,52 @@ $(document).ready(function () {
             displayChatroom(result);
         });
     }
+
+    function joinChatroom(chatroomId) {
+        $.ajax({
+            type: 'POST',
+            url: '../Home/JoinChatroom',
+            data: { 'chatroomId': chatroomId },
+            datatype: 'json'
+        }).done(function (result) {
+            connection.invoke('AddCurrentUserToGroup', result.chatroomId.toString()).catch(function (err) {
+                return console.error(err.toString());
+            });
+            addChatroomToList(result);
+        });
+    }
+
+    //autocomplete that runs when the user types in the search chatroom text box
+    $("#txtSearchChatrooms").autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                type: 'POST',
+                url: '../Home/AutoCompleteChatroom',
+                cache: false,
+                data: { 'prefix': request.term, 'userId': userId },
+                dataType: 'json',
+                success: function (data) {
+                    response($.map(data, function (item) {
+                        return {
+                            chatroomId: item.chatroomId,
+                            chatroomName: item.chatroomName,
+                            label: item.chatroomName,
+                            value: request.term,
+                            data: item
+                        }
+                    }))
+                }
+            });
+        },
+        minLength: 2,
+        select: function (event, ui) {
+            var result = confirm('Would you like to join the chatroom \"' + ui.item.data.chatroomName + '\"\?');
+            if (result == true) {
+                joinChatroom(ui.item.data.chatroomId);
+                getChatroom(ui.item.data.chatroomId);
+            }
+        }
+    });
 
 
     //EVENT LISTENERS
