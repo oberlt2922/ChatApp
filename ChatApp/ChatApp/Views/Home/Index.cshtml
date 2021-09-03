@@ -33,11 +33,6 @@ else
                     </button>
                 </div>
                 <div class="modal-body">
-                    <!--validate input
-                        check chatroom name length
-                        check if members exist
-                        autocomplete member textbox
-                            dont show current user-->
                     <form id="createChatroomForm">
                         <div class="row justify-content-center">
                             <label>Public</label>
@@ -63,18 +58,7 @@ else
             </div>
         </div>
     </div>
-    <!--CHATROOM LIST
-        search/join chatrooms autocomplete
-            only display chatroom if current user isn't already a member of chatroom or if they are blocked
-            onclick ajax post function
-                call add join chatroom json result controller method
-                    gets chatroom including members messages and senders
-                    adds current user to members
-                    return chatroom as json
-                    calls function to add chatroom to chatroom list
-                    calls function to display chatroom
-        new messages tag
-            add timestamp to AppUserChatroom table-->
+    <!--CHATROOM LIST-->
     <div class="container-fluid h-100">
         <div class="row justify-content-center h-100">
             <div class="col-md-4 col-xl-3 chat">
@@ -97,8 +81,8 @@ else
                                             </div>
                                             @if (room.Messages.Count > 0)
                                             {
-                                                <p id="message-text-preview">@room.Messages[room.Messages.Count - 1].Text</p>
-                                                <p>@room.Messages[room.Messages.Count - 1].Sent</p>
+                                                <p id="msg-preview-txt-@room.ChatroomId" class="message-text-preview">@room.Messages[room.Messages.Count - 1].Text</p>
+                                                <p id="msg-preview-sent-@room.ChatroomId">@room.Messages[room.Messages.Count - 1].Sent</p>
                                             }
                                         </div>
                                     </div>
@@ -111,51 +95,30 @@ else
                     </div>
                 </div>
             </div>
-            <!--CHATROOM
-                invite users should only show up if chatroom is public or if user is admin and chatroom is private
-                    onclick display modal to enter usernames
-                    autocomplete usernames
-                        dont show current user or any users who are already members or blocked users
-                block user is only available to admin
-                    create blocked field in AppUserChatroom table
-                unblock user only available to admin
-                delete chatroom is only available to admin
-                    deleter chatroom and all messages (test for cascade delete)
-                leave chatroom is available to everyone
-                    remove current user from chatroom-->
+            <!--CHATROOM-->
             <div class="col-md-8 col-xl-6 chat">
                 <div class="card">
                     <div class="card-header msg_head">
                         <div class="d-flex bd-highlight">
                             <div class="user_info">
-                                <span class="chat_chatroom_name">Chatroom name</span>
-                                <p class="message_count" style="margin-bottom: 0;">1767 Messages</p>
-                                <p class="members_count">10 Members</p>
+                                <span class="chat_chatroom_name"></span>
+                                <p class="message_count" style="margin-bottom: 0;"></p>
+                                <p class="members_count"></p>
                             </div>
                         </div>
                         <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
                         <div class="action_menu">
                             <ul>
-                                <li><i class="fas fa-users"></i> Invite users</li>
-                                <li><i class="fas fa-ban"></i> Block user</li>
-                                <li><i class="fas fa-trash"></i> Delete chatroom</li>
-                                <li><i class="fas fa-sign-out-alt"></i> Leave chatroom</li>
+                                <!--add these after display chatroom is called-->
+                                <li><i class="fas fa-trash"></i> Delete chatroom</li><!--admin-->
+                                <li><i class="fas fa-ban"></i> Block user</li><!--admin-->
+                                <li><i class="fas fa-users"></i> Invite users</li><!--all users unless private chatroom-->
+                                <li><i class="fas fa-sign-out-alt"></i> Leave chatroom</li><!--all users-->
                             </ul>
                         </div>
                     </div>
                     <div class="card-body msg_card_body">
-                        <div class="d-flex justify-content-start mb-4">
-                            <div class="msg_cotainer">
-                                Hi, how are you samim?
-                                <span class="msg_time">Sender Name 8:40 AM, Today</span>
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-end mb-4">
-                            <div class="msg_cotainer_send">
-                                Hi Khalid i am good tnx how about you?
-                                <span class="msg_time_send">8:55 AM, Today</span>
-                            </div>
-                        </div>
+                        <!--messages go here-->
                     </div>
                     <div class="card-footer">
                         <div class="input-group">

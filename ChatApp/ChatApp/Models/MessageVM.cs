@@ -16,5 +16,7 @@ namespace ChatApp.Models
         public DateTime Sent { get; set; }
         [JsonProperty("text")]
         public string Text { get; set; }
+        [JsonProperty("chatroomId")]
+        public string ChatroomId { get; set; }
     }
 }

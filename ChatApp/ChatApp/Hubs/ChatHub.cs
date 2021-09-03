@@ -77,6 +77,7 @@ namespace SignalRChat.Hubs
                 messagevm.Username = message.Username;
                 messagevm.Sent = message.Sent;
                 messagevm.Text = message.Text;
+                messagevm.ChatroomId = message.ChatroomId.ToString();
                 await Clients.Group(room.ChatroomId.ToString()).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(messagevm));
             }
             catch(Exception ex)

@@ -48,7 +48,16 @@ $(document).ready(function () {
 	automatically display most recent chatroom
 	User should not be able to add themselves when creating a new chatroom
 	Validation
+		check chatroom name
+		check if member exists or if it is current user
+		autocomplete
+			dont show current user
 	Anti Forgery Tokens
 	Cascade delete
 	clear hard coded chatroom values
 	move queries to repository class
+	new message tag on chatroom list
+		add timestamp to appuserChatroom table
+	display action menu items when display chatroom is called
+	when connection.on receive message is called, only display message if it belongs to active chatroom
+		else display it as most recent message on chatroom list item

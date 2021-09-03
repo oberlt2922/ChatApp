@@ -43,6 +43,7 @@ $(document).ready(function () {
     //DOM FUNCTIONS
     //display chatroom function to be called when chatroom is clicked or created
     function displayChatroom(chatroom) {
+        $('#active_chatroom_id').val(chatroom.chatroomId);
         $("#txtSearchChatrooms").val('');
         $('.chat_chatroom_name').text(chatroom.chatroomName);
         $('.message_count').text(chatroom.messages.length + ' Messages');
@@ -51,25 +52,28 @@ $(document).ready(function () {
         $.each(chatroom.messages, function (index, message) {
             displayMessage(message);
         });
-        $('#active_chatroom_id').val(chatroom.chatroomId);
     }
 
     //displays a message with the correct classes depending on the current user and the message's sender
     function displayMessage(message) {
-        var div = $('<div class="d-flex mb-4"></div>');
-        var msgContainer = $('<div></div>');
-        if (message.userId == userId) {
-            $(div).addClass('justify-content-end');
-            $(msgContainer).addClass('msg_cotainer_send');
-            $(msgContainer).html(message.text + '<span class="msg_time">' + moment(message.sent).calendar() + '</span>')
+        if (message.chatroomId == $('#active_chatroom_id').val()) {
+            var div = $('<div class="d-flex mb-4"></div>');
+            var msgContainer = $('<div></div>');
+            if (message.userId == userId) {
+                $(div).addClass('justify-content-end');
+                $(msgContainer).addClass('msg_cotainer_send');
+                $(msgContainer).html(message.text + '<span class="msg_time">' + moment(message.sent).calendar() + '</span>')
+            }
+            else {
+                $(div).addClass('justify-content-start');
+                $(msgContainer).addClass('msg_cotainer');
+                $(msgContainer).html(message.text + '<span class="msg_time">' + message.userName + ' ' + moment(message.sent).calendar() + '</span>')
+            }
+            $(div).append(msgContainer);
+            $('.msg_card_body').append(div);
         }
-        else {
-            $(div).addClass('justify-content-start');
-            $(msgContainer).addClass('msg_cotainer');
-            $(msgContainer).html(message.text + '<span class="msg_time">' + message.userName + ' ' + moment(message.sent).calendar() + '</span>')
-        }
-        $(div).append(msgContainer);
-        $('.msg_card_body').append(div);
+        $('#msg-preview-txt-' + message.chatroomId).text(message.text);
+        $('#msg-preview-sent-' + message.chatroomId).text(message.sent);
     }
 
     //add chatroom to list
@@ -89,8 +93,8 @@ $(document).ready(function () {
         $(div2).append(chatIdInput).append(div3);
         $(div3).append(span);
         if (!$.isEmptyObject(chatroom.Messages)) {
-            var messageText = $('<p id="message-text-preview">' + chatroom.Messages[chatroom.Messages.length - 1].text + '</p>');
-            var messageSent = $('<p>' + chatroom.Messages[chatroom.Messages.length - 1].sent + '</p>');
+            var messageText = $('<p id="msg-preview-txt-' + chatroom.chatroomId + '" class="message-text-preview">' + chatroom.Messages[chatroom.Messages.length - 1].text + '</p>');
+            var messageSent = $('<p id="msg-preview-sent-' + chatroom.chatroomId + '">' + chatroom.Messages[chatroom.Messages.length - 1].sent + '</p>');
             $(div2).append(messageText).append(messageSent);
         }
         $('ui.contacts').prepend(listItem);
