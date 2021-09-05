@@ -54,9 +54,14 @@ $(document).ready(function () {
         $('.msg_card_body').empty();
         $('.msg_card_body').mCustomScrollbar({
             callbacks: {
+                onInit: function () {
+                    $(this).mCustomScrollbar("scrollTo", "bottom");
+                },
                 onUpdate: function () {
-                    if (this.mcs.top - $('.msg_card_body').height() === containerHeight * -1) {
-                        $(this).mCustomScrollbar("scrollTo", "bottom");
+                    if (this.mcs) {
+                        if (this.mcs.top - $('.msg_card_body').height() === containerHeight * -1) {
+                            $(this).mCustomScrollbar("scrollTo", "bottom");
+                        }
                     }
                 },
                 whileScrolling: function () {
@@ -90,6 +95,7 @@ $(document).ready(function () {
             $('.mCSB_container').append(div);
             $('.msg_card_body').mCustomScrollbar("update");
         }
+        $('#msg-preview-txt-' + message.chatroomId).text(message.text);
         $('#msg-preview-sent-' + message.chatroomId).text(message.sent);
     }
 
@@ -109,10 +115,12 @@ $(document).ready(function () {
         $(div1).append(div2);
         $(div2).append(chatIdInput).append(div3);
         $(div3).append(span);
+        var messageText = $('<p id="msg-preview-txt-' + chatroom.chatroomId + '" class="message-text-preview"></p>');
+        var messageSent = $('<p id="msg-preview-sent-' + chatroom.chatroomId + '"></p>');
+        $(div2).append(messageText).append(messageSent);
         if (!$.isEmptyObject(chatroom.Messages)) {
-            var messageText = $('<p id="msg-preview-txt-' + chatroom.chatroomId + '" class="message-text-preview">' + chatroom.Messages[chatroom.Messages.length - 1].text + '</p>');
-            var messageSent = $('<p id="msg-preview-sent-' + chatroom.chatroomId + '">' + chatroom.Messages[chatroom.Messages.length - 1].sent + '</p>');
-            $(div2).append(messageText).append(messageSent);
+            $(messageText).text(chatroom.Messages[chatroom.Messages.length - 1].text);
+            $(messageSent).text(chatroom.Messages[chatroom.Messages.length - 1].sent);
         }
         $('ui.contacts').prepend(listItem);
     }
