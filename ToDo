@@ -1,6 +1,7 @@
 //Things to do
 	message from other users says undefined instead of the username
 		also sometimes the message sender and time info is two lines instead of one and is on top of the message itself instead of underneath.
+	message sent formating in chatroom list
 	Footer is not at the bottom on home screen before login
 	automatically display most recent chatroom
 	User should not be able to add themselves when creating a new chatroom
