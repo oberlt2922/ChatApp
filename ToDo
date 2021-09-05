@@ -1,48 +1,7 @@
-/*search chatrooms auto complete
- *  EVENT LISTENER WILL ONLY BE CREATED FOR TEXT BOXES THAT ALREADY EXIST
- *  MUST CREATE EVENT LISTENER FOR TEXT BOXES CREATED AFTER DOCUMENT IS READY
- *  RESEARCH EVENT DELEGATION SO THAT EVENT BEHAVIORS WILL BE EXTENDED TO NEW ELEMENTS WITHOUT HAVING
- *  TO REBIND THEM
-$(document).ready(function () {
-    $("#txtSearchChatrooms").autocomplete({
-        source: function (request, response) {
-            $.ajax({
-                url: '/ChatroomList/AutoCompleteChatrooms',
-                type: 'POST',
-                cache: false,
-                data: { "prefix": request.term },
-                dataType: 'json',
-                success: function (data) {
-                    response($.map(data, function (item) {
-                        return {
-                            chatroomId: data.chatroomId,
-                            chatroomName: data.chatroomName,
-                            data: item
-                        }
-                    }))
-                }
-            });
-        },
-        minLength: 2,
-        select: function (event, ui) {
-            $.confirm({
-                title: 'Join Chatroom',
-                content: 'Would you like to join the chatroom \"' + ui.item.chatroomName + '\"\?',
-                buttons: {
-                    confirm: function () {
-                        window.location.href = url.replace('id', ui.item.chatroomId);
-                    }
-                }
-            });
-        }
-    });
-});*/
-
-
 //Things to do
 	message from other users says undefined instead of the username
 		also sometimes the message sender and time info is two lines instead of one and is on top of the message itself instead of underneath.
-	Footer gets in the way when window size is adjusted
+	Footer is not at the bottom on home screen before login
 	automatically display most recent chatroom
 	User should not be able to add themselves when creating a new chatroom
 	Validation
@@ -55,8 +14,7 @@ $(document).ready(function () {
 	new message tag on chatroom list
 		add timestamp to appuserChatroom table
 	add action menu items when display chatroom is called
-	When the user scrolls up in the chatroom, detach (make it so that the chatroom does not automatically scroll down) and display an element to 
-		reatach(scrolls to bottom every time a message comes in)
 	add custom scrollbar to chatroom list
 	if word is too long handle text overflow
-	only send message if there is an active chatroom
+	if no chatroom is selected/displayed then do not send messages
+	do not allow users to send empty messages
