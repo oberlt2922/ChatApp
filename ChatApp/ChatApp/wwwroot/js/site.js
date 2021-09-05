@@ -3,6 +3,7 @@
 //current username and user id
 var userId = $('#active_user_id').val();
 var username = $('#active_username').val();
+var containerHeight;
 
 $(document).ready(function () {  
     //SIGNALR CODE
@@ -34,6 +35,7 @@ $(document).ready(function () {
     connection.on("ReceiveMessage", function (messageJson) {
         var message = $.parseJSON(messageJson);
         displayMessage(message);
+        console.log($('msg_card_mody').mcs.top);
     });
 
     connection.on('DisplayError', function (errorMessage) {
@@ -43,15 +45,29 @@ $(document).ready(function () {
     //DOM FUNCTIONS
     //display chatroom function to be called when chatroom is clicked or created
     function displayChatroom(chatroom) {
+        $('.msg_card_body').mCustomScrollbar("destroy");
         $('#active_chatroom_id').val(chatroom.chatroomId);
         $("#txtSearchChatrooms").val('');
         $('.chat_chatroom_name').text(chatroom.chatroomName);
         $('.message_count').text(chatroom.messages.length + ' Messages');
         $('.members_count').text(chatroom.members.length + ' Members');
         $('.msg_card_body').empty();
+        $('.msg_card_body').mCustomScrollbar({
+            callbacks: {
+                onUpdate: function () {
+                    if (this.mcs.top - $('.msg_card_body').height() === containerHeight * -1) {
+                        $(this).mCustomScrollbar("scrollTo", "bottom");
+                    }
+                },
+                whileScrolling: function () {
+                    console.log(this.mcs.top);
+                }
+            }
+        });
         $.each(chatroom.messages, function (index, message) {
             displayMessage(message);
         });
+        $('.msg_card_body').mCustomScrollbar("scrollTo", "bottom");
     }
 
     //displays a message with the correct classes depending on the current user and the message's sender
@@ -69,10 +85,11 @@ $(document).ready(function () {
                 $(msgContainer).addClass('msg_cotainer');
                 $(msgContainer).html(message.text + '<span class="msg_time">' + message.userName + ' ' + moment(message.sent).calendar() + '</span>')
             }
+            containerHeight = $('.mCSB_container').height();
             $(div).append(msgContainer);
-            $('.msg_card_body').append(div);
+            $('.mCSB_container').append(div);
+            $('.msg_card_body').mCustomScrollbar("update");
         }
-        $('#msg-preview-txt-' + message.chatroomId).text(message.text);
         $('#msg-preview-sent-' + message.chatroomId).text(message.sent);
     }
 

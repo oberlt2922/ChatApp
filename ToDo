@@ -43,8 +43,6 @@ $(document).ready(function () {
 	message from other users says undefined instead of the username
 		also sometimes the message sender and time info is two lines instead of one and is on top of the message itself instead of underneath.
 	Footer gets in the way when window size is adjusted
-	Chat does not automatically scroll down when new messages come through
-	apply custom scroll bar
 	automatically display most recent chatroom
 	User should not be able to add themselves when creating a new chatroom
 	Validation
@@ -54,10 +52,11 @@ $(document).ready(function () {
 			dont show current user
 	Anti Forgery Tokens
 	Cascade delete
-	clear hard coded chatroom values
-	move queries to repository class
 	new message tag on chatroom list
 		add timestamp to appuserChatroom table
-	display action menu items when display chatroom is called
-	when connection.on receive message is called, only display message if it belongs to active chatroom
-		else display it as most recent message on chatroom list item
+	add action menu items when display chatroom is called
+	When the user scrolls up in the chatroom, detach (make it so that the chatroom does not automatically scroll down) and display an element to 
+		reatach(scrolls to bottom every time a message comes in)
+	add custom scrollbar to chatroom list
+	if word is too long handle text overflow
+	only send message if there is an active chatroom
