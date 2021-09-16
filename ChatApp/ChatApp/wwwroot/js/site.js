@@ -86,7 +86,7 @@ $(document).ready(function () {
             if (message.userId == userId) {
                 $(div).addClass('justify-content-end');
                 $(msgContainer).addClass('msg_cotainer_send');
-                $(msgContainer).html(message.text + '<span class="msg_time">' + moment(message.sent).calendar() + '</span>')
+                $(msgContainer).html(message.text + '<span class="msg_time_send">' + moment(message.sent).calendar() + '</span>')
             }
             else {
                 $(div).addClass('justify-content-start');

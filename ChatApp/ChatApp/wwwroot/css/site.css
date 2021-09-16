@@ -226,6 +226,8 @@ body {
 		background-color: #82ccdd;
 		padding: 10px;
 		position: relative;
+		overflow-wrap: break-word;
+		max-width: 90%;
 	}
 	.msg_cotainer_send{
 		margin-top: auto;
@@ -235,6 +237,8 @@ body {
 		background-color: #78e08f;
 		padding: 10px;
 		position: relative;
+		overflow-wrap: break-word;
+		max-width: 90%;
 	}
 	.msg_time{
 		position: absolute;
@@ -242,6 +246,7 @@ body {
 		bottom: -15px;
 		color: rgba(255,255,255,0.5);
 		font-size: 10px;
+		white-space: nowrap;
 	}
 	.msg_time_send{
 		position: absolute;
@@ -249,6 +254,7 @@ body {
 		bottom: -15px;
 		color: rgba(255,255,255,0.5);
 		font-size: 10px;
+		white-space: nowrap;
 	}
 	.msg_head{
 		position: relative;
