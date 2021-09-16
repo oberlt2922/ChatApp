@@ -91,7 +91,7 @@ $(document).ready(function () {
             else {
                 $(div).addClass('justify-content-start');
                 $(msgContainer).addClass('msg_cotainer');
-                $(msgContainer).html(message.text + '<span class="msg_time">' + message.userName + ' ' + moment(message.sent).calendar() + '</span>')
+                $(msgContainer).html(message.text + '<span class="msg_time">' + message.username + ' ' + moment(message.sent).calendar() + '</span>')
             }
             containerHeight = $('.msg_card_body .mCSB_container').height();
             $(div).append(msgContainer);
