@@ -74,7 +74,7 @@ else
                         <ui class="contacts">
                             @foreach (Chatroom room in Model.Chatrooms)
                             {
-                                <li class="chatroomListItem" style="border-bottom-style:solid; border-bottom-color: lightslategrey; border-bottom-width: 1px;">
+                                <li class="chatroomListItem" style="margin-bottom: 0; border-bottom-style:solid; border-bottom-color: lightslategrey; border-bottom-width: 1px;">
                                     <div class="d-flex bd-highlight">
                                         <div class="user_info col-11">
                                             <input type="hidden" class="chatroom_id" value="@room.ChatroomId" />
@@ -83,8 +83,8 @@ else
                                             </div>
                                             @if (room.Messages.Count > 0)
                                             {
-                                                <p id="msg-preview-txt-@room.ChatroomId" class="message-text-preview">@room.Messages[room.Messages.Count - 1].Text</p>
-                                                <p id="msg-preview-sent-@room.ChatroomId">
+                                                <p id="msg-preview-txt-@room.ChatroomId" class="message-text-preview" style="margin-bottom: 0;">@room.Messages[room.Messages.Count - 1].Text</p>
+                                                <p id="msg-preview-sent-@room.ChatroomId" style="margin-bottom: 0;">
                                                     <script>
                                                         document.write(moment("@room.Messages[room.Messages.Count - 1].Sent").calendar());
                                                     </script>

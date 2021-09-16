@@ -19,3 +19,6 @@
 	do not allow users to send empty messages
 	change order of chatroom list when new messages come info
 	add custom scrollbar elements to chatroomlist html
+	move inline css to stylesheet
+		CLEAR CSS CACHE IF EDITING STYLESHEET DOES NOT WORK
+			HOLD SHIFT WHEN HITTING REFRESH BUTTON
