@@ -6,6 +6,8 @@
     ViewData["Title"] = "Home Page";
 }
 
+<script src="~/lib/moment.js/moment.js"></script>
+
 @if (!SignInManager.IsSignedIn(User))
 {
     <div class="text-center">
@@ -82,7 +84,11 @@ else
                                             @if (room.Messages.Count > 0)
                                             {
                                                 <p id="msg-preview-txt-@room.ChatroomId" class="message-text-preview">@room.Messages[room.Messages.Count - 1].Text</p>
-                                                <p id="msg-preview-sent-@room.ChatroomId">@room.Messages[room.Messages.Count - 1].Sent</p>
+                                                <p id="msg-preview-sent-@room.ChatroomId">
+                                                    <script>
+                                                        document.write(moment("@room.Messages[room.Messages.Count - 1].Sent").calendar());
+                                                    </script>
+                                                </p>
                                             }
                                         </div>
                                     </div>
@@ -137,7 +143,6 @@ else
     <input type="hidden" id="active_chatroom_id" />
     @section Scripts
     {
-        <script src="~/lib/moment.js/moment.js"></script>
         <script src="~/js/signalr/dist/browser/signalr.js"></script>
         <script src="~/js/site.js" asp-append-version="true"></script>
     }

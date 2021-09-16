@@ -99,7 +99,7 @@ $(document).ready(function () {
             $('.msg_card_body').mCustomScrollbar("update");
         }
         $('#msg-preview-txt-' + message.chatroomId).text(message.text);
-        $('#msg-preview-sent-' + message.chatroomId).text(message.sent);
+        $('#msg-preview-sent-' + message.chatroomId).text(moment(message.sent).calendar());
     }
 
     //add chatroom to list
