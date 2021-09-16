@@ -3,7 +3,6 @@
 		also sometimes the message sender and time info is two lines instead of one and is on top of the message itself instead of underneath.
 	message sent formating in chatroom list
 	Footer is not at the bottom on home screen before login
-	automatically display most recent chatroom
 	User should not be able to add themselves when creating a new chatroom
 	Validation
 		check chatroom name
@@ -15,7 +14,8 @@
 	new message tag on chatroom list
 		add timestamp to appuserChatroom table
 	add action menu items when display chatroom is called
-	add custom scrollbar to chatroom list
 	if word is too long handle text overflow
 	if no chatroom is selected/displayed then do not send messages
 	do not allow users to send empty messages
+	change order of chatroom list when new messages come info
+	add custom scrollbar elements to chatroomlist html

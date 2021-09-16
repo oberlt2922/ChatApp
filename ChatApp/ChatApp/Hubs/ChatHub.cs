@@ -60,12 +60,12 @@ namespace SignalRChat.Hubs
                 AppUser currentUser = await _context.AppUser.SingleOrDefaultAsync(user => user.Id == userId);
                 Chatroom room = await _context.Chatroom.SingleOrDefaultAsync(room => room.ChatroomId == Convert.ToInt32(chatroomId));
                 Message message = new Message();
-                message.Username = currentUser.UserName;
-                message.Text = messageText;
-                message.Sent = DateTime.Now;
                 message.UserId = currentUser.Id;
-                message.Sender = currentUser;
+                message.Username = currentUser.UserName;
+                message.Sent = DateTime.Now;
+                message.Text = messageText;
                 message.ChatroomId = room.ChatroomId;
+                message.Sender = currentUser;
                 message.Room = room;
 
                 _context.Message.Add(message);

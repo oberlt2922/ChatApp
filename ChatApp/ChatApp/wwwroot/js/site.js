@@ -6,6 +6,9 @@ var username = $('#active_username').val();
 var containerHeight;
 
 $(document).ready(function () {  
+    //add custom scrollbar to chatroom list when page is loaded
+    $('.contacts_body').mCustomScrollbar();
+
     //SIGNALR CODE
     //create signalr connection and disable send button until connection starts and the dom is ready
     var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
@@ -90,9 +93,9 @@ $(document).ready(function () {
                 $(msgContainer).addClass('msg_cotainer');
                 $(msgContainer).html(message.text + '<span class="msg_time">' + message.userName + ' ' + moment(message.sent).calendar() + '</span>')
             }
-            containerHeight = $('.mCSB_container').height();
+            containerHeight = $('.msg_card_body .mCSB_container').height();
             $(div).append(msgContainer);
-            $('.mCSB_container').append(div);
+            $('.msg_card_body .mCSB_container').append(div);
             $('.msg_card_body').mCustomScrollbar("update");
         }
         $('#msg-preview-txt-' + message.chatroomId).text(message.text);
@@ -122,7 +125,9 @@ $(document).ready(function () {
             $(messageText).text(chatroom.Messages[chatroom.Messages.length - 1].text);
             $(messageSent).text(chatroom.Messages[chatroom.Messages.length - 1].sent);
         }
-        $('ui.contacts').prepend(listItem);
+        //$('ui.contacts').prepend(listItem);
+        $('.contacts_body .mCSB_container').prepend(listItem);
+        $('.contacts_body').mCustomScrollbar("update");
     }
 
     //AJAX FUNCTIONS
