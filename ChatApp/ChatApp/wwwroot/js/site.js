@@ -1,11 +1,12 @@
 ﻿"use strict";
 
-//current username and user id
-var userId = $('#active_user_id').val();
-var username = $('#active_username').val();
-var containerHeight;
+$(document).ready(function () {
+    //current username and user id
+    var userId = $('#active_user_id').val();
+    var username = $('#active_username').val();
+    var chatroomId;
+    var containerHeight;
 
-$(document).ready(function () {  
     //add custom scrollbar to chatroom list when page is loaded
     $('.contacts_body').mCustomScrollbar();
 
@@ -38,7 +39,6 @@ $(document).ready(function () {
     connection.on("ReceiveMessage", function (messageJson) {
         var message = $.parseJSON(messageJson);
         displayMessage(message);
-        console.log($('msg_card_mody').mcs.top);
     });
 
     connection.on('DisplayError', function (errorMessage) {
@@ -50,6 +50,7 @@ $(document).ready(function () {
     function displayChatroom(chatroom) {
         $('.msg_card_body').mCustomScrollbar("destroy");
         $('#active_chatroom_id').val(chatroom.chatroomId);
+        chatroomId = chatroom.chatroomId;
         $("#txtSearchChatrooms").val('');
         $('.chat_chatroom_name').text(chatroom.chatroomName);
         $('.message_count').text(chatroom.messages.length + ' Messages');
@@ -68,7 +69,6 @@ $(document).ready(function () {
                     }
                 },
                 whileScrolling: function () {
-                    console.log(this.mcs.top);
                 }
             }
         });
@@ -80,18 +80,18 @@ $(document).ready(function () {
 
     //displays a message with the correct classes depending on the current user and the message's sender
     function displayMessage(message) {
-        if (message.chatroomId == $('#active_chatroom_id').val()) {
+        if (message.chatroomId == chatroomId) {
             var div = $('<div class="d-flex mb-4"></div>');
             var msgContainer = $('<div></div>');
             if (message.userId == userId) {
                 $(div).addClass('justify-content-end');
                 $(msgContainer).addClass('msg_cotainer_send');
-                $(msgContainer).html(message.text + '<span class="msg_time_send">' + moment(message.sent).calendar() + '</span>')
+                $(msgContainer).html(message.text + '<span class="msg_time_send">' + moment(message.sent).calendar() + '</span>');
             }
             else {
                 $(div).addClass('justify-content-start');
                 $(msgContainer).addClass('msg_cotainer');
-                $(msgContainer).html(message.text + '<span class="msg_time">' + message.username + ' ' + moment(message.sent).calendar() + '</span>')
+                $(msgContainer).html(message.text + '<span class="msg_time">' + message.username + ' ' + moment(message.sent).calendar() + '</span>');
             }
             containerHeight = $('.msg_card_body .mCSB_container').height();
             $(div).append(msgContainer);
@@ -138,7 +138,6 @@ $(document).ready(function () {
             data: { 'chatroomId': id },
             dataType: 'json'
         }).done(function (result) {
-            console.log(result);
             displayChatroom(result);
         });
     }
@@ -232,7 +231,7 @@ $(document).ready(function () {
     //calls create chatroom and clears the form in the popup
     $('#createChatroomBtn').on('click', function (event) {
         event.preventDefault();
-        var isPublic = $('input[name="isPublic"]:checked', '#createChatroomForm').val()
+        var isPublic = $('input[name="isPublic"]:checked', '#createChatroomForm').val();
         var chatroomName = $('input[name="chatroomName"]').val();
         var members = new Array();
         $('input[name="username"]').each(function () {
@@ -252,24 +251,24 @@ $(document).ready(function () {
     $('#send-msg-btn').on('click', function (event) {
         event.preventDefault();
         var messageText = $('textarea[name="new-message"]').val();
-        var chatroomId = $('#active_chatroom_id').val();
-        connection.invoke('SendMessage', messageText, userId.toString(), chatroomId.toString()).catch(function (err) {
-            return console.error(err.toString());
-        });
-        $('textarea[name="new-message"]').val('');
+        chatroomId = $('#active_chatroom_id').val();
+        if (chatroomId && messageText) {
+            connection.invoke('SendMessage', messageText, userId.toString(), chatroomId.toString()).catch(function (err) {
+                return console.error(err.toString());
+            });
+            $('textarea[name="new-message"]').val('');
+        }
     });
 
     //START SIGNALR CONNECTION
     //the connection must started after the connection.on event listeners are defined
     //enable send button when connection is started
     connection.start().then(function () {
-        console.log("connection started!!!!!!!");
         //add user's connection to each chatroom group
         $('.chatroom_id').each(function (index) {
             connection.invoke('AddCurrentUserToGroup', $(this).val()).catch(function (err) {
                 return console.error(err.toString());
             });
-            console.log('added user to chatroom ' + $(this).val());
         });
         $('.send_btn').prop('disabled', false);
     }).catch(function (err) {

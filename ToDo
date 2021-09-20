@@ -1,21 +1,25 @@
 //Things to do
-	message sent formating in chatroom list
 	Footer is not at the bottom on home screen before login
-	User should not be able to add themselves when creating a new chatroom
 	Validation
 		check chatroom name
 		check if member exists or if it is current user
+		User should not be able to add themselves when creating a new chatroom
 		autocomplete
 			dont show current user
 	Anti Forgery Tokens
 	Cascade delete
 	new message tag on chatroom list
 		add timestamp to appuserChatroom table
-	add action menu items when display chatroom is called
-	if no chatroom is selected/displayed then do not send messages
-	do not allow users to send empty messages
 	change order of chatroom list when new messages come info
 	add custom scrollbar elements to chatroomlist html
 	move inline css to stylesheet
 		CLEAR CSS CACHE IF EDITING STYLESHEET DOES NOT WORK
 			HOLD SHIFT WHEN HITTING REFRESH BUTTON
+	refactor send message method in chathub file
+			
+			
+	
+//CURRENT TASKS
+	if no chatroom is selected/displayed then do not send messages
+	do not allow users to send empty messages
+	add action menu items when display chatroom is called
