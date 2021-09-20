@@ -28,3 +28,7 @@
 		remove user from chatroom
 		remove chatroom list item
 		clear chatroom panel
+		send message to chatroom announcing that user has left the chatroom
+		if the user leaving is the admin
+			appoint the user with the most messages in the chatroom as the new admin
+			send message to chatroom announcing the new admin
