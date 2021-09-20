@@ -16,10 +16,15 @@
 		CLEAR CSS CACHE IF EDITING STYLESHEET DOES NOT WORK
 			HOLD SHIFT WHEN HITTING REFRESH BUTTON
 	refactor send message method in chathub file
+	delete chatroom
+	invite users
+	block users
+	block chatroom
 			
 			
 	
 //CURRENT TASKS
-	if no chatroom is selected/displayed then do not send messages
-	do not allow users to send empty messages
-	add action menu items when display chatroom is called
+	leave chatroom
+		remove user from chatroom
+		remove chatroom list item
+		clear chatroom panel

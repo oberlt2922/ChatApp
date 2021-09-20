@@ -1,23 +1,24 @@
 ﻿"use strict";
 
 $(document).ready(function () {
+    //VARIABLES AND CODE THAT RUNS AS SOON AS THE DOM IS READY////////////////////////////////////////////////////
     //current username and user id
-    var userId = $('#active_user_id').val();
-    var username = $('#active_username').val();
-    var chatroomId;
-    var containerHeight;
+    var currentUserId = $('#active_user_id').val();
+    var currentUsername = $('#active_username').val();
+    var activeChatroomId;
+    var mcsContainerHeight;
 
     //add custom scrollbar to chatroom list when page is loaded
     $('.contacts_body').mCustomScrollbar();
 
-    //SIGNALR CODE
+    //SIGNALR CODE///////////////////////////////////////////////////////////////////////////////////////////////
     //create signalr connection and disable send button until connection starts and the dom is ready
     var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
     $('.send_btn').prop('disabled', true);
 
     //when a new chatroom is created each member will be added to the group
     connection.on('AddToNewGroup', function (chatroomId) {
-        connection.invoke('AddCurrentUserToNewGroup', chatroomId, userId).catch(function (err) {
+        connection.invoke('AddCurrentUserToNewGroup', chatroomId, currentUserId).catch(function (err) {
             return console.error(err.toString());
         });
     });
@@ -45,12 +46,24 @@ $(document).ready(function () {
         console.log(errorMessage);
     });
 
-    //DOM FUNCTIONS
+    //DOM FUNCTIONS//////////////////////////////////////////////////////////////////////////////////////////////
     //display chatroom function to be called when chatroom is clicked or created
     function displayChatroom(chatroom) {
         $('.msg_card_body').mCustomScrollbar("destroy");
+        $('#action_menu_list').empty();
+        if (chatroom.adminId == currentUserId) {
+            var deleteChatroomLi = $('<li id="delete_chatroom_li"><i class="fas fa-trash"></i> Delete chatroom</li>');
+            var blockUserLi = $('<li id="block_user_li"><i class="fas fa-ban"></i> Block user</li>');
+            $('#action_menu_list').append(deleteChatroomLi).append(blockUserLi);
+        }
+        if (chatroom.adminId == currentUserId || chatroom.isPublic == true) {
+            var inviteUsersLi = $('<li id="invite_user_li"><i class="fas fa-users"></i> Invite users</li>');
+            $('#action_menu_list').append(inviteUsersLi);
+        }
+        var leaveChatroomLi = $('<li id="leave_chatroom_li"><i class="fas fa-sign-out-alt"></i> Leave chatroom</li>');
+        $('#action_menu_list').append(leaveChatroomLi);
         $('#active_chatroom_id').val(chatroom.chatroomId);
-        chatroomId = chatroom.chatroomId;
+        activeChatroomId = chatroom.chatroomId;
         $("#txtSearchChatrooms").val('');
         $('.chat_chatroom_name').text(chatroom.chatroomName);
         $('.message_count').text(chatroom.messages.length + ' Messages');
@@ -63,7 +76,7 @@ $(document).ready(function () {
                 },
                 onUpdate: function () {
                     if (this.mcs) {
-                        if (this.mcs.top - $('.msg_card_body').height() === containerHeight * -1) {
+                        if (this.mcs.top - $('.msg_card_body').height() === mcsContainerHeight * -1) {
                             $(this).mCustomScrollbar("scrollTo", "bottom");
                         }
                     }
@@ -80,10 +93,10 @@ $(document).ready(function () {
 
     //displays a message with the correct classes depending on the current user and the message's sender
     function displayMessage(message) {
-        if (message.chatroomId == chatroomId) {
+        if (message.chatroomId == activeChatroomId) {
             var div = $('<div class="d-flex mb-4"></div>');
             var msgContainer = $('<div></div>');
-            if (message.userId == userId) {
+            if (message.userId == currentUserId) {
                 $(div).addClass('justify-content-end');
                 $(msgContainer).addClass('msg_cotainer_send');
                 $(msgContainer).html(message.text + '<span class="msg_time_send">' + moment(message.sent).calendar() + '</span>');
@@ -93,7 +106,7 @@ $(document).ready(function () {
                 $(msgContainer).addClass('msg_cotainer');
                 $(msgContainer).html(message.text + '<span class="msg_time">' + message.username + ' ' + moment(message.sent).calendar() + '</span>');
             }
-            containerHeight = $('.msg_card_body .mCSB_container').height();
+            mcsContainerHeight = $('.msg_card_body .mCSB_container').height();
             $(div).append(msgContainer);
             $('.msg_card_body .mCSB_container').append(div);
             $('.msg_card_body').mCustomScrollbar("update");
@@ -105,7 +118,7 @@ $(document).ready(function () {
     //add chatroom to list
     function addChatroomToList(chatroom) {
         var listItem = $('<li class="chatroomListItem" style="border-bottom-style:solid; border-bottom-color: lightslategrey; border-bottom-width: 1px;"></li>');
-        if (chatroom.adminId == userId) {
+        if (chatroom.adminId == currentUserId) {
             $('.active').removeClass('active');
             $(listItem).addClass('active');
         }
@@ -130,7 +143,7 @@ $(document).ready(function () {
         $('.contacts_body').mCustomScrollbar("update");
     }
 
-    //AJAX FUNCTIONS
+    //AJAX FUNCTIONS//////////////////////////////////////////////////////////////////////////////////////////////
     function getChatroom(id) {
         $.ajax({
             type: 'POST',
@@ -171,6 +184,7 @@ $(document).ready(function () {
         });
     }
 
+    //AUTOCOMPLETE FUNCTIONS//////////////////////////////////////////////////////////////////////////////////////
     //autocomplete that runs when the user types in the search chatroom text box
     $("#txtSearchChatrooms").autocomplete({
         source: function (request, response) {
@@ -178,7 +192,7 @@ $(document).ready(function () {
                 type: 'POST',
                 url: '../Home/AutoCompleteChatroom',
                 cache: false,
-                data: { 'prefix': request.term, 'userId': userId },
+                data: { 'prefix': request.term, 'userId': currentUserId },
                 dataType: 'json',
                 success: function (data) {
                     response($.map(data, function (item) {
@@ -204,10 +218,12 @@ $(document).ready(function () {
     });
 
 
-    //EVENT LISTENERS
+    //EVENT LISTENERS/////////////////////////////////////////////////////////////////////////////////////////////
     //toggles the chatroom menu
-	$('#action_menu_btn').click(function () {
-		$('.action_menu').toggle();
+    $('#action_menu_btn').click(function () {
+        if (activeChatroomId) {
+            $('.action_menu').toggle();
+        }
     });
 
     //create extra text box for adding members to chatroom
@@ -251,16 +267,36 @@ $(document).ready(function () {
     $('#send-msg-btn').on('click', function (event) {
         event.preventDefault();
         var messageText = $('textarea[name="new-message"]').val();
-        chatroomId = $('#active_chatroom_id').val();
-        if (chatroomId && messageText) {
-            connection.invoke('SendMessage', messageText, userId.toString(), chatroomId.toString()).catch(function (err) {
+        activeChatroomId = $('#active_chatroom_id').val();
+        if (activeChatroomId && messageText) {
+            connection.invoke('SendMessage', messageText, currentUserId.toString(), activeChatroomId.toString()).catch(function (err) {
                 return console.error(err.toString());
             });
             $('textarea[name="new-message"]').val('');
         }
     });
 
-    //START SIGNALR CONNECTION
+    //delete chatroom
+    $('#action_menu_list').on('click', '#delete_chatroom_li', function (event) {
+
+    });
+
+    //block user
+    $('#action_menu_list').on('click', '#block_user_li', function (event) {
+
+    });
+
+    //invite user
+    $('#action_menu_list').on('click', '#invite_user_li', function (event) {
+
+    });
+
+    //leave chatroom
+    $('#action_menu_list').on('click', '#leave_chatroom_li', function (event) {
+
+    });
+
+    //START SIGNALR CONNECTION/////////////////////////////////////////////////////////////////////////////////////
     //the connection must started after the connection.on event listeners are defined
     //enable send button when connection is started
     connection.start().then(function () {
