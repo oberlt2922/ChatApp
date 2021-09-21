@@ -24,11 +24,13 @@
 			
 	
 //CURRENT TASKS
-	leave chatroom
-		remove user from chatroom
-		remove chatroom list item
-		clear chatroom panel
-		send message to chatroom announcing that user has left the chatroom
-		if the user leaving is the admin
-			appoint the user with the most messages in the chatroom as the new admin
-			send message to chatroom announcing the new admin
+leave chatroom
+	when admin leaves chatroom a new admin is not selected
+	when non-admin leaves, no message is sent
+	when all members leave a chatroom, it is not deleted
+	add non-user messages to db
+	scroll down when non-user messages are received
+	test for one member
+	test for two users
+	test for three users
+	clicking on chatroom list item after leaving chatroom does not display the chatroom

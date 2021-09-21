@@ -7,6 +7,7 @@ using ChatApp.Data;
 using System;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace SignalRChat.Hubs
 {
@@ -84,6 +85,26 @@ namespace SignalRChat.Hubs
             {
                 await Clients.User(userId).SendAsync("DisplayError", ex.Message);
             }
+        }
+
+        //connection.on function
+        public async Task LeftChatroomMessage(string chatroomId, string username)
+        {
+            await Clients.Group(chatroomId).SendAsync("ReceiveLeftChatroomMessage", $"{username} left the chatroom.", chatroomId);
+        }
+
+        //connection.on function
+        public async Task NewAdminMessage(string chatroomId, string adminId)
+        {
+            string newAdminUsername = _context.AppUser
+                .Where(User => User.Id == adminId)
+                .Select(User => User.UserName)
+                .Single();
+            bool isPublic = _context.Chatroom
+                .Where(Chatroom => Chatroom.ChatroomId == Convert.ToInt32(chatroomId))
+                .Select(Chatroom => Chatroom.IsPublic)
+                .Single();
+            await Clients.Group(chatroomId).SendAsync("ReceiveNewAdminMessage", $"{newAdminUsername} is the new admin.", chatroomId, adminId, isPublic);
         }
     }
 }

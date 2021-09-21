@@ -119,6 +119,49 @@ namespace ChatApp.Controllers
             return Json(chatroom);
         }
 
+        //leave chatroom and choose new admin if current user is admin
+        public async Task<JsonResult> LeaveChatroom(string chatroomId)
+        {
+            bool adminChanged = false;
+            Chatroom chatroom = await _context.Chatroom
+                .Include(Chatroom => Chatroom.Members)
+                .SingleAsync(Chatroom => Chatroom.ChatroomId == Convert.ToInt32(chatroomId));
+            AppUser currentUser = await _userManager.GetUserAsync(User);
+            if(chatroom.AdminId == currentUser.Id)
+            {
+                if(chatroom.Members.Count == 1)
+                {
+                    //delete chatroom
+                }
+                else if(chatroom.Members.Count == 2)
+                {
+                    string newAdminId = chatroom.Members
+                        .Where(Member => Member.Id != currentUser.Id)
+                        .Select(Member => Member.Id)
+                        .Single();
+                    chatroom.AdminId = newAdminId;
+                }
+                else
+                {
+                    var newAdmin = chatroom.Messages
+                        .GroupBy(Message => Message.UserId)
+                        .Select(UserGroup => new
+                        {
+                            id = UserGroup.Key,
+                            Count = UserGroup.Count()
+                        })
+                        .OrderByDescending(UserGroup => UserGroup.Count)
+                        .First();
+                    chatroom.AdminId = newAdmin.id;
+                }
+                adminChanged = true;
+            }
+            var returnObject = new { adminChanged = adminChanged, adminId = chatroom.AdminId };
+            chatroom.Members.Remove(currentUser);
+            await _context.SaveChangesAsync();
+            return Json(returnObject);
+        }
+
 
 
 

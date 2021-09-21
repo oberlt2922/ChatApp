@@ -42,26 +42,50 @@ $(document).ready(function () {
         displayMessage(message);
     });
 
+    //Receive message that alerts group of a user leaving chatroom
+    connection.on("ReceiveLeftChatroomMessage", function (message, chatroomId) {
+        if (chatroomId == activeChatroomId.toString()) {
+            var div = $('<div class="d-flex mb-4 justify-content-center bg-dark bg-transparent"></div>');
+            $(div).append('<p class="text-white">' + message + '</p>');
+        }
+    });
+
+    //Receive message that alerts group on new admin and adds action menu items if current user is new admin
+    connection.on("ReceiveNewAdminMessage", function (message, chatroomId, adminId, isPublic) {
+        if (chatroomId == activeChatroomId.toString()) {
+            var div = $('<div class="d-flex mb-4 justify-content-center bg-dark bg-transparent"></div>');
+            $(div).append('<p class="text-white">' + message + '</p>');
+            if (currentUserId == adminId) {
+                displayActionIcons(adminId, isPublic);
+            }
+        }
+    });
+
     connection.on('DisplayError', function (errorMessage) {
         console.log(errorMessage);
     });
 
     //DOM FUNCTIONS//////////////////////////////////////////////////////////////////////////////////////////////
-    //display chatroom function to be called when chatroom is clicked or created
-    function displayChatroom(chatroom) {
-        $('.msg_card_body').mCustomScrollbar("destroy");
+    //display action menu items
+    function displayActionIcons(adminId, isPublic) {
         $('#action_menu_list').empty();
-        if (chatroom.adminId == currentUserId) {
+        if (adminId == currentUserId) {
             var deleteChatroomLi = $('<li id="delete_chatroom_li"><i class="fas fa-trash"></i> Delete chatroom</li>');
             var blockUserLi = $('<li id="block_user_li"><i class="fas fa-ban"></i> Block user</li>');
             $('#action_menu_list').append(deleteChatroomLi).append(blockUserLi);
         }
-        if (chatroom.adminId == currentUserId || chatroom.isPublic == true) {
+        if (adminId == currentUserId || isPublic == true) {
             var inviteUsersLi = $('<li id="invite_user_li"><i class="fas fa-users"></i> Invite users</li>');
             $('#action_menu_list').append(inviteUsersLi);
         }
         var leaveChatroomLi = $('<li id="leave_chatroom_li"><i class="fas fa-sign-out-alt"></i> Leave chatroom</li>');
         $('#action_menu_list').append(leaveChatroomLi);
+    }
+
+    //display chatroom function to be called when chatroom is clicked or created
+    function displayChatroom(chatroom) {
+        $('.msg_card_body').mCustomScrollbar("destroy");
+        displayActionIcons(chatroom.adminId, chatroom.isPublic);
         $('#active_chatroom_id').val(chatroom.chatroomId);
         activeChatroomId = chatroom.chatroomId;
         $("#txtSearchChatrooms").val('');
@@ -117,7 +141,7 @@ $(document).ready(function () {
 
     //add chatroom to list
     function addChatroomToList(chatroom) {
-        var listItem = $('<li class="chatroomListItem" style="border-bottom-style:solid; border-bottom-color: lightslategrey; border-bottom-width: 1px;"></li>');
+        var listItem = $('<li class="chatroomListItem" style="margin-bottom: 0; border-bottom-style:solid; border-bottom-color: lightslategrey; border-bottom-width: 1px;"></li>');
         if (chatroom.adminId == currentUserId) {
             $('.active').removeClass('active');
             $(listItem).addClass('active');
@@ -131,15 +155,15 @@ $(document).ready(function () {
         $(div1).append(div2);
         $(div2).append(chatIdInput).append(div3);
         $(div3).append(span);
-        var messageText = $('<p id="msg-preview-txt-' + chatroom.chatroomId + '" class="message-text-preview"></p>');
-        var messageSent = $('<p id="msg-preview-sent-' + chatroom.chatroomId + '"></p>');
+        var messageText = $('<p id="msg-preview-txt-' + chatroom.chatroomId + '" class="message-text-preview" style="margin-bottom: 0;"></p>');
+        var messageSent = $('<p id="msg-preview-sent-' + chatroom.chatroomId + '" style="margin-bottom: 0;"></p>');
         $(div2).append(messageText).append(messageSent);
         if (!$.isEmptyObject(chatroom.Messages)) {
             $(messageText).text(chatroom.Messages[chatroom.Messages.length - 1].text);
             $(messageSent).text(chatroom.Messages[chatroom.Messages.length - 1].sent);
         }
-        //$('ui.contacts').prepend(listItem);
-        $('.contacts_body .mCSB_container').prepend(listItem);
+        $('ui.contacts').prepend(listItem);
+        //$('.contacts_body .mCSB_container').prepend(listItem);
         $('.contacts_body').mCustomScrollbar("update");
     }
 
@@ -181,6 +205,33 @@ $(document).ready(function () {
                 return console.error(err.toString());
             });
             addChatroomToList(result);
+            getChatroom(chatroomId);
+        });
+    }
+
+    function leaveChatroom() {
+        $.ajax({
+            type: 'POST',
+            url: '../Home/LeaveChatroom',
+            data: { 'chatroomId': activeChatroomId },
+            dataType: 'json'
+        }).done(function (result) {
+            $('li.active').remove();
+            $('#action_menu_list').empty();
+            $('.chat_chatroom_name').text('');
+            $('.message_count').text('');
+            $('.members_count').text('');
+            $('.msg_card_body').mCustomScrollbar("destroy");
+            $('.msg_card_body').empty();
+            connection.invoke('LeftChatroomMessage', activeChatroomId.toString(), currentUsername.toString()).catch(function (err) {
+                return console.error(err.toString());
+            });
+            if (result.adminChanged == true) {
+                connection.invoke('NewAdminMessage', activeChatroomId.toString(), result.adminId.toString()).catch(function (err) {
+                    return console.error(err.toString());
+                })
+            }
+            activeChatroomId = null;
         });
     }
 
@@ -212,7 +263,6 @@ $(document).ready(function () {
             var result = confirm('Would you like to join the chatroom \"' + ui.item.data.chatroomName + '\"\?');
             if (result == true) {
                 joinChatroom(ui.item.data.chatroomId);
-                getChatroom(ui.item.data.chatroomId);
             }
         }
     });
@@ -293,7 +343,8 @@ $(document).ready(function () {
 
     //leave chatroom
     $('#action_menu_list').on('click', '#leave_chatroom_li', function (event) {
-
+        $('.action_menu').toggle();
+        leaveChatroom();
     });
 
     //START SIGNALR CONNECTION/////////////////////////////////////////////////////////////////////////////////////
