@@ -32,7 +32,7 @@ $(document).ready(function () {
             data: { 'chatroomId': chatroomId },
             dataType: 'json'
         }).done(function (result) {
-            addChatroomToList(result);
+            addChatroomToList(result, false);
         });
     });
 
@@ -65,8 +65,7 @@ $(document).ready(function () {
         console.log(errorMessage);
     });
 
-    //DOM FUNCTIONS//////////////////////////////////////////////////////////////////////////////////////////////
-    //display action menu items
+    //DOM FUNCTIONS////////////////////////////////////////////////////////////////////////////////////////////////display action menu items
     function displayActionIcons(adminId, isPublic) {
         $('#action_menu_list').empty();
         if (adminId == currentUserId) {
@@ -88,7 +87,6 @@ $(document).ready(function () {
         displayActionIcons(chatroom.adminId, chatroom.isPublic);
         $('#active_chatroom_id').val(chatroom.chatroomId);
         activeChatroomId = chatroom.chatroomId;
-        $("#txtSearchChatrooms").val('');
         $('.chat_chatroom_name').text(chatroom.chatroomName);
         $('.message_count').text(chatroom.messages.length + ' Messages');
         $('.members_count').text(chatroom.members.length + ' Members');
@@ -140,9 +138,9 @@ $(document).ready(function () {
     }
 
     //add chatroom to list
-    function addChatroomToList(chatroom) {
+    function addChatroomToList(chatroom, active) {
         var listItem = $('<li class="chatroomListItem" style="margin-bottom: 0; border-bottom-style:solid; border-bottom-color: lightslategrey; border-bottom-width: 1px;"></li>');
-        if (chatroom.adminId == currentUserId) {
+        if (chatroom.adminId == currentUserId || active == true) {
             $('.active').removeClass('active');
             $(listItem).addClass('active');
         }
@@ -158,9 +156,9 @@ $(document).ready(function () {
         var messageText = $('<p id="msg-preview-txt-' + chatroom.chatroomId + '" class="message-text-preview" style="margin-bottom: 0;"></p>');
         var messageSent = $('<p id="msg-preview-sent-' + chatroom.chatroomId + '" style="margin-bottom: 0;"></p>');
         $(div2).append(messageText).append(messageSent);
-        if (!$.isEmptyObject(chatroom.Messages)) {
-            $(messageText).text(chatroom.Messages[chatroom.Messages.length - 1].text);
-            $(messageSent).text(chatroom.Messages[chatroom.Messages.length - 1].sent);
+        if (!$.isEmptyObject(chatroom.messages)) {
+            $(messageText).text(chatroom.messages[chatroom.messages.length - 1].text);
+            $(messageSent).text(chatroom.messages[chatroom.messages.length - 1].sent);
         }
         $('ui.contacts').prepend(listItem);
         //$('.contacts_body .mCSB_container').prepend(listItem);
@@ -194,7 +192,7 @@ $(document).ready(function () {
         });
     }
 
-    function joinChatroom(chatroomId) {
+    function joinChatroom(chatroomId, display) {
         $.ajax({
             type: 'POST',
             url: '../Home/JoinChatroom',
@@ -204,8 +202,14 @@ $(document).ready(function () {
             connection.invoke('AddCurrentUserToGroup', result.chatroomId.toString()).catch(function (err) {
                 return console.error(err.toString());
             });
-            addChatroomToList(result);
-            getChatroom(chatroomId);
+            if (display == true) {
+                $('.active').removeClass('active');
+                addChatroomToList(result, true);
+                displayChatroom(result);
+            }
+            else {
+                addChatroomToList(result, false);
+            }
         });
     }
 
@@ -262,8 +266,11 @@ $(document).ready(function () {
         select: function (event, ui) {
             var result = confirm('Would you like to join the chatroom \"' + ui.item.data.chatroomName + '\"\?');
             if (result == true) {
-                joinChatroom(ui.item.data.chatroomId);
+                joinChatroom(ui.item.data.chatroomId, true);
             }
+        },
+        close: function () {
+            $('#txtSearchChatrooms').val('');
         }
     });
 

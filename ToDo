@@ -25,12 +25,10 @@
 	
 //CURRENT TASKS
 leave chatroom
-	when admin leaves chatroom a new admin is not selected
-	when non-admin leaves, no message is sent
-	when all members leave a chatroom, it is not deleted
+	when non-admin leaves, message should be sent
+	when all members leave a chatroom, it should be deleted
 	add non-user messages to db
 	scroll down when non-user messages are received
 	test for one member
 	test for two users
 	test for three users
-	clicking on chatroom list item after leaving chatroom does not display the chatroom
