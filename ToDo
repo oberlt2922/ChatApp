@@ -32,3 +32,5 @@ leave chatroom
 	test for one member
 	test for two users
 	test for three users
+		check if user is still member when appointing new admin
+			maybe appoint user who has been in the chatroom the longest instead of the most active user
