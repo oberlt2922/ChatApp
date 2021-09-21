@@ -11,7 +11,6 @@
 	new message tag on chatroom list
 		add timestamp to appuserChatroom table
 	change order of chatroom list when new messages come info
-	add custom scrollbar elements to chatroomlist html
 	move inline css to stylesheet
 		CLEAR CSS CACHE IF EDITING STYLESHEET DOES NOT WORK
 			HOLD SHIFT WHEN HITTING REFRESH BUTTON
@@ -20,6 +19,10 @@
 	invite users
 	block users
 	block chatroom
+	check for better way to keep track of current user/active chatroom
+	check for repeated code
+	try to replace view model
+		try to fix self referencing loop error
 			
 			
 	
