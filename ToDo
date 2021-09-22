@@ -23,6 +23,9 @@
 	check for repeated code
 	try to replace view model
 		try to fix self referencing loop error
+	add confirm to leave chatroom
+	when if message is received when confirm function is awaiting a click, message is not displayed and message preview in chatroom list is not updated
+	clear search data in autocomplete function
 			
 			
 	
