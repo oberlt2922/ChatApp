@@ -265,7 +265,10 @@ $(document).ready(function () {
         select: function (event, ui) {
             var result = confirm('Would you like to join the chatroom \"' + ui.item.data.chatroomName + '\"\?');
             if (result == true) {
-                joinChatroom(ui.item.data.chatroomId, true);
+                joinChatroom(ui.item.data.chatroomId, true);                
+                connection.invoke('NewMemberMessage', ui.item.data.chatroomId.toString(), currentUsername, currentUserId).catch(function (err) {
+                    return console.error(err.toString());
+                });
             }
         },
         close: function () {

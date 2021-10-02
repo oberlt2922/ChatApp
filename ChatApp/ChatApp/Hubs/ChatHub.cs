@@ -151,5 +151,33 @@ namespace SignalRChat.Hubs
                 await Clients.User(userId).SendAsync("DisplayError", ex.Message);
             }
         }
+
+        public async Task NewMemberMessage(string chatroomId, string username, string userId)
+        {
+            try
+            {
+                Chatroom room = await _context.Chatroom.SingleOrDefaultAsync(room => room.ChatroomId == Convert.ToInt32(chatroomId));
+                Message message = new Message();
+                message.Sent = DateTime.Now;
+                message.Text = $"{username} has joined the chatroom.";
+                message.ChatroomId = room.ChatroomId;
+                message.Room = room;
+
+                _context.Message.Add(message);
+                room.Messages.Add(message);
+                await _context.SaveChangesAsync();
+
+                MessageVM messagevm = new MessageVM();
+                messagevm.Sent = message.Sent;
+                messagevm.Text = message.Text;
+                messagevm.ChatroomId = message.ChatroomId.ToString();
+
+                await Clients.Group(room.ChatroomId.ToString()).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(messagevm));
+            }
+            catch(Exception ex)
+            {
+                await Clients.User(userId).SendAsync("DisplayError", ex.Message);
+            }
+        }
     }
 }
