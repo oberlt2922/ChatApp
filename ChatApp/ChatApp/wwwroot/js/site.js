@@ -223,11 +223,13 @@ $(document).ready(function () {
             $('.msg_card_body').mCustomScrollbar("destroy");
             $('.msg_card_body').empty();
             if (result.adminChanged !== "" && result.adminId !== "") {
-                connection.invoke('LeftChatroomMessage', activeChatroomId.toString(), currentUsername.toString()).catch(function (err) {
-                    return console.error(err.toString());
-                });
+                if (result.adminChanged == false) {
+                    connection.invoke('LeftChatroomMessage', activeChatroomId.toString(), currentUsername.toString(), currentUserId).catch(function (err) {
+                        return console.error(err.toString());
+                    });
+                }
                 if (result.adminChanged == true) {
-                    connection.invoke('NewAdminMessage', activeChatroomId.toString(), result.adminId.toString()).catch(function (err) {
+                    connection.invoke('NewAdminMessage', activeChatroomId.toString(), result.adminId.toString(), currentUsername, currentUserId).catch(function (err) {
                         return console.error(err.toString());
                     });
                 }

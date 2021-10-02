@@ -79,6 +79,7 @@ namespace SignalRChat.Hubs
                 messagevm.Sent = message.Sent;
                 messagevm.Text = message.Text;
                 messagevm.ChatroomId = message.ChatroomId.ToString();
+
                 await Clients.Group(room.ChatroomId.ToString()).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(messagevm));
             }
             catch(Exception ex)
@@ -88,40 +89,67 @@ namespace SignalRChat.Hubs
         }
 
         //connection.on function
-        public async Task LeftChatroomMessage(string chatroomId, string username)
+        public async Task LeftChatroomMessage(string chatroomId, string username, string userId)
         {
-            Chatroom room = await _context.Chatroom.SingleOrDefaultAsync(room => room.ChatroomId == Convert.ToInt32(chatroomId));
-            Message message = new Message();
-            message.Sent = DateTime.Now;
-            message.Text = $"{username} left the chatroom.";
-            message.ChatroomId = room.ChatroomId;
-            message.Room = room;
+            try
+            {
+                Chatroom room = await _context.Chatroom.SingleOrDefaultAsync(room => room.ChatroomId == Convert.ToInt32(chatroomId));
+                Message message = new Message();
+                message.Sent = DateTime.Now;
+                message.Text = $"{username} left the chatroom.";
+                message.ChatroomId = room.ChatroomId;
+                message.Room = room;
 
-            _context.Message.Add(message);
-            room.Messages.Add(message);
-            await _context.SaveChangesAsync();
-            await Clients.Group(room.ChatroomId.ToString()).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(message));
+                _context.Message.Add(message);
+                room.Messages.Add(message);
+                await _context.SaveChangesAsync();
+
+                MessageVM messagevm = new MessageVM();
+                messagevm.Sent = message.Sent;
+                messagevm.Text = message.Text;
+                messagevm.ChatroomId = message.ChatroomId.ToString();
+
+                await Clients.Group(room.ChatroomId.ToString()).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(messagevm));
+            }
+            catch(Exception ex)
+            {
+                await Clients.User(userId).SendAsync("DisplayError", ex.Message);
+            }
         }
 
         //connection.on function
-        public async Task NewAdminMessage(string chatroomId, string adminId)
+        public async Task NewAdminMessage(string chatroomId, string adminId, string username, string userId)
         {
-            string newAdminUsername = _context.AppUser
-                .Where(User => User.Id == adminId)
-                .Select(User => User.UserName)
-                .Single();
-            Chatroom room = await _context.Chatroom.SingleOrDefaultAsync(room => room.ChatroomId == Convert.ToInt32(chatroomId));
-            Message message = new Message();
-            message.Sent = DateTime.Now;
-            message.Text = $"{newAdminUsername} has been assigned as the chatroom admin.";
-            message.ChatroomId = room.ChatroomId;
-            message.Room = room;
+            try
+            {
+                string newAdminUsername = _context.AppUser
+                        .Where(User => User.Id == adminId)
+                        .Select(User => User.UserName)
+                        .Single();
+                Chatroom room = await _context.Chatroom.SingleOrDefaultAsync(room => room.ChatroomId == Convert.ToInt32(chatroomId));
+                Message message = new Message();
+                message.Sent = DateTime.Now;
+                message.Text = $"{username} has left the chatroom, {newAdminUsername} is now the admin.";
+                message.ChatroomId = room.ChatroomId;
+                message.Room = room;
 
-            _context.Message.Add(message);
-            room.Messages.Add(message);
-            await _context.SaveChangesAsync();
-            await Clients.Group(room.ChatroomId.ToString()).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(message));
-            await Clients.User(room.AdminId).SendAsync("GrantAdminPrivileges", room.ChatroomId);
+                _context.Message.Add(message);
+                room.Messages.Add(message);
+                await _context.SaveChangesAsync();
+
+                MessageVM messagevm = new MessageVM();
+                messagevm.Sent = message.Sent;
+                messagevm.Text = message.Text;
+                messagevm.ChatroomId = message.ChatroomId.ToString();
+
+                await Clients.Group(room.ChatroomId.ToString()).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(messagevm));
+                await Clients.User(room.AdminId).SendAsync("GrantAdminPrivileges", room.ChatroomId);
+            }
+            catch (Exception ex)
+            {
+
+                await Clients.User(userId).SendAsync("DisplayError", ex.Message);
+            }
         }
     }
 }
