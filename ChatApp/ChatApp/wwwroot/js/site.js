@@ -42,22 +42,10 @@ $(document).ready(function () {
         displayMessage(message);
     });
 
-    //Receive message that alerts group of a user leaving chatroom
-    connection.on("ReceiveLeftChatroomMessage", function (message, chatroomId) {
-        if (chatroomId == activeChatroomId.toString()) {
-            var div = $('<div class="d-flex mb-4 justify-content-center bg-dark bg-transparent"></div>');
-            $(div).append('<p class="text-white">' + message + '</p>');
-        }
-    });
-
     //Receive message that alerts group on new admin and adds action menu items if current user is new admin
-    connection.on("ReceiveNewAdminMessage", function (message, chatroomId, adminId, isPublic) {
+    connection.on("GrantAdminPrivileges", function (chatroomId) {
         if (chatroomId == activeChatroomId.toString()) {
-            var div = $('<div class="d-flex mb-4 justify-content-center bg-dark bg-transparent"></div>');
-            $(div).append('<p class="text-white">' + message + '</p>');
-            if (currentUserId == adminId) {
-                displayActionIcons(adminId, isPublic);
-            }
+            displayActionIcons(currentUserId, "");
         }
     });
 
@@ -116,20 +104,27 @@ $(document).ready(function () {
     //displays a message with the correct classes depending on the current user and the message's sender
     function displayMessage(message) {
         if (message.chatroomId == activeChatroomId) {
-            var div = $('<div class="d-flex mb-4"></div>');
-            var msgContainer = $('<div></div>');
-            if (message.userId == currentUserId) {
-                $(div).addClass('justify-content-end');
-                $(msgContainer).addClass('msg_cotainer_send');
-                $(msgContainer).html(message.text + '<span class="msg_time_send">' + moment(message.sent).calendar() + '</span>');
+            var div;
+            if (message.userId == null || message.userId == "") {
+                div = $('<div class="d-flex mb-4 justify-content-center bg-dark bg-transparent"></div>');
+                $(div).append('<p class="text-white">' + message.text + '</p>');
             }
             else {
-                $(div).addClass('justify-content-start');
-                $(msgContainer).addClass('msg_cotainer');
-                $(msgContainer).html(message.text + '<span class="msg_time">' + message.username + ' ' + moment(message.sent).calendar() + '</span>');
+                div = $('<div class="d-flex mb-4"></div>');
+                var msgContainer = $('<div></div>');
+                if (message.userId == currentUserId) {
+                    $(div).addClass('justify-content-end');
+                    $(msgContainer).addClass('msg_cotainer_send');
+                    $(msgContainer).html(message.text + '<span class="msg_time_send">' + moment(message.sent).calendar() + '</span>');
+                }
+                else {
+                    $(div).addClass('justify-content-start');
+                    $(msgContainer).addClass('msg_cotainer');
+                    $(msgContainer).html(message.text + '<span class="msg_time">' + message.username + ' ' + moment(message.sent).calendar() + '</span>');
+                }
+                $(div).append(msgContainer);
             }
             mcsContainerHeight = $('.msg_card_body .mCSB_container').height();
-            $(div).append(msgContainer);
             $('.msg_card_body .mCSB_container').append(div);
             $('.msg_card_body').mCustomScrollbar("update");
         }
@@ -227,13 +222,15 @@ $(document).ready(function () {
             $('.members_count').text('');
             $('.msg_card_body').mCustomScrollbar("destroy");
             $('.msg_card_body').empty();
-            connection.invoke('LeftChatroomMessage', activeChatroomId.toString(), currentUsername.toString()).catch(function (err) {
-                return console.error(err.toString());
-            });
-            if (result.adminChanged == true) {
-                connection.invoke('NewAdminMessage', activeChatroomId.toString(), result.adminId.toString()).catch(function (err) {
+            if (result.adminChanged !== "" && result.adminId !== "") {
+                connection.invoke('LeftChatroomMessage', activeChatroomId.toString(), currentUsername.toString()).catch(function (err) {
                     return console.error(err.toString());
-                })
+                });
+                if (result.adminChanged == true) {
+                    connection.invoke('NewAdminMessage', activeChatroomId.toString(), result.adminId.toString()).catch(function (err) {
+                        return console.error(err.toString());
+                    });
+                }
             }
             activeChatroomId = null;
         });

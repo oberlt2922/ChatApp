@@ -24,7 +24,8 @@ namespace ChatApp.Data
             builder.Entity<Message>()
                 .HasOne<AppUser>(a => a.Sender)
                 .WithMany(b => b.Messages)
-                .HasForeignKey(c => c.UserId);
+                .HasForeignKey(c => c.UserId)
+                .IsRequired(false);
             builder.Entity<Message>()
                 .HasOne<Chatroom>(d => d.Room)
                 .WithMany(e => e.Messages)

@@ -9,7 +9,6 @@ namespace ChatApp.Models
     public class Message
     {
         public int MessageId { get; set; }
-        [Required]
         public string Username { get; set; }
         [Required]
         public string Text { get; set; }
