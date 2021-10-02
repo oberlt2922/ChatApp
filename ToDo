@@ -27,12 +27,8 @@
 	when if message is received when confirm function is awaiting a click, message is not displayed and message preview in chatroom list is not updated
 	clear search data in autocomplete function
 	choose new admin based on most messages
-	send message when joining chatroom
 			
 			
 	
 //CURRENT TASKS
-leave chatroom
-	when non-admin leaves, message should be sent
-	add non-user messages to db
-	scroll down when non-user messages are received
+	send message when joining chatroom
