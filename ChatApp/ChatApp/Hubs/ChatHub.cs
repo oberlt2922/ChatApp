@@ -89,16 +89,16 @@ namespace SignalRChat.Hubs
         }
 
         //connection.on function
-        public async Task LeftChatroomMessage(string chatroomId, string username, string userId)
+        public async Task NonUserMessage(string text, string chatroomId, string userId, bool newAdmin)
         {
             try
             {
                 Chatroom room = await _context.Chatroom.SingleOrDefaultAsync(room => room.ChatroomId == Convert.ToInt32(chatroomId));
                 Message message = new Message();
                 message.Sent = DateTime.Now;
-                message.Text = $"{username} left the chatroom.";
                 message.ChatroomId = room.ChatroomId;
                 message.Room = room;
+                message.Text = text;
 
                 _context.Message.Add(message);
                 room.Messages.Add(message);
@@ -110,71 +110,9 @@ namespace SignalRChat.Hubs
                 messagevm.ChatroomId = message.ChatroomId.ToString();
 
                 await Clients.Group(room.ChatroomId.ToString()).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(messagevm));
-            }
-            catch(Exception ex)
-            {
-                await Clients.User(userId).SendAsync("DisplayError", ex.Message);
-            }
-        }
-
-        //connection.on function
-        public async Task NewAdminMessage(string chatroomId, string adminId, string username, string userId)
-        {
-            try
-            {
-                string newAdminUsername = _context.AppUser
-                        .Where(User => User.Id == adminId)
-                        .Select(User => User.UserName)
-                        .Single();
-                Chatroom room = await _context.Chatroom.SingleOrDefaultAsync(room => room.ChatroomId == Convert.ToInt32(chatroomId));
-                Message message = new Message();
-                message.Sent = DateTime.Now;
-                message.Text = $"{username} has left the chatroom, {newAdminUsername} is now the admin.";
-                message.ChatroomId = room.ChatroomId;
-                message.Room = room;
-
-                _context.Message.Add(message);
-                room.Messages.Add(message);
-                await _context.SaveChangesAsync();
-
-                MessageVM messagevm = new MessageVM();
-                messagevm.Sent = message.Sent;
-                messagevm.Text = message.Text;
-                messagevm.ChatroomId = message.ChatroomId.ToString();
-
-                await Clients.Group(room.ChatroomId.ToString()).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(messagevm));
-                await Clients.User(room.AdminId).SendAsync("GrantAdminPrivileges", room.ChatroomId);
+                if(newAdmin) await Clients.User(room.AdminId).SendAsync("GrantAdminPrivileges", room.ChatroomId);
             }
             catch (Exception ex)
-            {
-
-                await Clients.User(userId).SendAsync("DisplayError", ex.Message);
-            }
-        }
-
-        public async Task NewMemberMessage(string chatroomId, string username, string userId)
-        {
-            try
-            {
-                Chatroom room = await _context.Chatroom.SingleOrDefaultAsync(room => room.ChatroomId == Convert.ToInt32(chatroomId));
-                Message message = new Message();
-                message.Sent = DateTime.Now;
-                message.Text = $"{username} has joined the chatroom.";
-                message.ChatroomId = room.ChatroomId;
-                message.Room = room;
-
-                _context.Message.Add(message);
-                room.Messages.Add(message);
-                await _context.SaveChangesAsync();
-
-                MessageVM messagevm = new MessageVM();
-                messagevm.Sent = message.Sent;
-                messagevm.Text = message.Text;
-                messagevm.ChatroomId = message.ChatroomId.ToString();
-
-                await Clients.Group(room.ChatroomId.ToString()).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(messagevm));
-            }
-            catch(Exception ex)
             {
                 await Clients.User(userId).SendAsync("DisplayError", ex.Message);
             }

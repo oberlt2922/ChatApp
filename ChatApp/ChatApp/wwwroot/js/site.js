@@ -224,12 +224,14 @@ $(document).ready(function () {
             $('.msg_card_body').empty();
             if (result.adminChanged !== "" && result.adminId !== "") {
                 if (result.adminChanged == false) {
-                    connection.invoke('LeftChatroomMessage', activeChatroomId.toString(), currentUsername.toString(), currentUserId).catch(function (err) {
+                    var text = currentUsername + ' left the chatroom.';
+                    connection.invoke('NonUserMessage', text, activeChatroomId.toString(), currentUserId, false).catch(function (err) {
                         return console.error(err.toString());
                     });
                 }
                 if (result.adminChanged == true) {
-                    connection.invoke('NewAdminMessage', activeChatroomId.toString(), result.adminId.toString(), currentUsername, currentUserId).catch(function (err) {
+                    var text = currentUsername + ' left, ' + result.adminUsername + ' is now the admin.';
+                    connection.invoke('NonUserMessage', text, activeChatroomId.toString(), currentUserId, true).catch(function (err) {
                         return console.error(err.toString());
                     });
                 }
@@ -265,8 +267,9 @@ $(document).ready(function () {
         select: function (event, ui) {
             var result = confirm('Would you like to join the chatroom \"' + ui.item.data.chatroomName + '\"\?');
             if (result == true) {
-                joinChatroom(ui.item.data.chatroomId, true);                
-                connection.invoke('NewMemberMessage', ui.item.data.chatroomId.toString(), currentUsername, currentUserId).catch(function (err) {
+                joinChatroom(ui.item.data.chatroomId, true);    
+                var text = currentUsername + ' has joined the chatroom.';
+                connection.invoke('NonUserMessage', text, ui.item.data.chatroomId.toString(), currentUserId, false).catch(function (err) {
                     return console.error(err.toString());
                 });
             }

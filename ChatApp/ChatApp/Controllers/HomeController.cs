@@ -137,15 +137,21 @@ namespace ChatApp.Controllers
             }
             else
             {
+                string adminUsername = "";
                 if (chatroom.AdminId == currentUser.Id)
                 {
                     if (chatroom.Members.Count == 2)
                     {
-                        string newAdminId = chatroom.Members
+                        var newAdmin = chatroom.Members
                             .Where(Member => Member.Id != currentUser.Id)
-                            .Select(Member => Member.Id)
+                            .Select(Member => new
+                            {
+                                Id = Member.Id,
+                                Username = Member.UserName
+                            })
                             .Single();
-                        chatroom.AdminId = newAdminId;
+                        chatroom.AdminId = newAdmin.Id;
+                        adminUsername = newAdmin.Username;
                     }
                     else
                     {
@@ -154,13 +160,14 @@ namespace ChatApp.Controllers
                             if (member.Id != chatroom.AdminId)
                             {
                                 chatroom.AdminId = member.Id;
+                                adminUsername = member.UserName;
                                 break;
                             }
                         }
                     }
                     adminChanged = true;
                 }
-                var returnObject = new { adminChanged = adminChanged, adminId = chatroom.AdminId };
+                var returnObject = new { adminChanged = adminChanged, adminId = chatroom.AdminId, adminUsername = adminUsername };
                 chatroom.Members.Remove(currentUser);
                 await _context.SaveChangesAsync();
                 return Json(returnObject);
