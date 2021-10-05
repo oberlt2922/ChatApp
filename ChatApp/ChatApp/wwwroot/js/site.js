@@ -191,17 +191,19 @@ $(document).ready(function () {
         $('.contacts_body').mCustomScrollbar("update");
     }
 
-    //Clears the chatroom panel
+    //Clears the chatroom panel if the chatroom being removed is active
     //Emptys the action menu
     //Removes the chatroom list item
     function removeChatroom(chatroomId) {
         $('li#chatroom-list-item-' + chatroomId).remove();
-        $('#action_menu_list').empty();
-        $('.chat_chatroom_name').text('');
-        $('.message_count').text('');
-        $('.members_count').text('');
-        $('.msg_card_body').mCustomScrollbar("destroy");
-        $('.msg_card_body').empty();
+        if (activeChatroomId == chatroomId) {
+            $('#action_menu_list').empty();
+            $('.chat_chatroom_name').text('');
+            $('.message_count').text('');
+            $('.members_count').text('');
+            $('.msg_card_body').mCustomScrollbar("destroy");
+            $('.msg_card_body').empty();
+        }
     }
 
     //AJAX FUNCTIONS////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
