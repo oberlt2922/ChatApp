@@ -22,6 +22,7 @@ namespace SignalRChat.Hubs
 
         /// <summary>
         /// This method is called when a user signs in
+        /// This method is called for every chatroom that the user is a member of
         /// The user is added to the groups of every chatroom that they are already a member of
         /// </summary>
         public async Task AddCurrentUserToGroup(string chatroomId)
@@ -30,9 +31,10 @@ namespace SignalRChat.Hubs
         }
 
         /// <summary>
-        /// called when a new chatroom is created
-        /// for each user in the new chatroom the AddCurrentUserToNewGroup function is called which adds that user to the group
-        /// after the user is added to the group the chatroom is displayed
+        /// Called when a new chatroom is created,
+        /// for each user in the new chatroom AddToNewGroup() is called which calls AddCurrentUserToNewGroup().
+        /// This is because in order to add a user to a group, you have to add their ConnectionId to the group.
+        /// Hub methods can only access the connection id of the current client.
         /// </summary>
         public async Task AddMembersToGroup(string chatroomId, string users)
         {
@@ -44,8 +46,8 @@ namespace SignalRChat.Hubs
         }
 
         /// <summary>
-        /// This method is called when a new chatroom is created
-        /// The current user is added to the new chatroom group, then the new chatroom is displayed in the chatroom list
+        /// This method is called when a new chatroom is created.
+        /// The current user is added to the new chatroom group, then the new chatroom is added to the chatroom list.
         /// </summary>
         public async Task AddCurrentUserToNewGroup(string chatroomId, string userId)
         {
@@ -53,7 +55,12 @@ namespace SignalRChat.Hubs
             await Clients.User(userId).SendAsync("AddNewChatroomToList", chatroomId);
         }
 
-        //Add message to chatroom and send it to group
+        /// <summary>
+        /// A method that sends a message from a user to the chatroom
+        /// </summary>
+        /// <param name="messageText">The text that was entered by the user</param>
+        /// <param name="userId">The id of the user who sent the message</param>
+        /// <param name="chatroomId">The id of the chatroom that the message is being sent to</param>
         public async Task SendMessage(string messageText, string userId, string chatroomId)
         {
             try
@@ -88,8 +95,14 @@ namespace SignalRChat.Hubs
             }
         }
 
-        //connection.on function
-        public async Task NonUserMessage(string text, string chatroomId, string userId, bool newAdmin)
+        /// <summary>
+        /// A method that is called whenever alerts need to be sent to a chatroom
+        /// </summary>
+        /// <param name="text">The text of the message that is being sent</param>
+        /// <param name="chatroomId">The id of the chatroom that the message is being sent to</param>
+        /// <param name="userId">The current user id which is used to send an error message to the client when an exception is thrown</param>
+        /// <param name="newAdmin">A bool argument indicating whether admin privileges need to be granted to a new admin</param>
+        public async Task SendNonUserMessage(string text, string chatroomId, string userId, bool newAdmin)
         {
             try
             {

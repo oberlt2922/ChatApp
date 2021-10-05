@@ -27,6 +27,7 @@ namespace ChatApp.Controllers
             _userManager = userManager;
         }
 
+        //If user is signed in, the user, chatrooms, and messages are fetched and returned to the view.
         public async Task<IActionResult> Index()
         {
             if (!_signInManager.IsSignedIn(User))
@@ -46,6 +47,14 @@ namespace ChatApp.Controllers
             }
         }
 
+        /// <summary>
+        /// Method to create chatroom.
+        /// Checks if users exist before adding them to the chatroom.
+        /// </summary>
+        /// <param name="isPublic">If the chatroom is public or private</param>
+        /// <param name="chatroomName">The name of the chatroom</param>
+        /// <param name="username">An array of the usernames that the creator of the chatroom entered</param>
+        /// <returns>Returns the created chatroom as json object</returns>
         [HttpPost]
         public async Task<JsonResult> CreateChatroom(string isPublic, string chatroomName, string[] username)
         {
@@ -70,6 +79,7 @@ namespace ChatApp.Controllers
             return GetChatroom(room.ChatroomId.ToString());
         }
 
+        //Fetches and returns the chatroom as Json
         [HttpPost]
         public JsonResult GetChatroom(string chatroomId)
         {

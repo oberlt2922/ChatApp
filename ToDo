@@ -10,21 +10,21 @@
 	Cascade delete
 	new message tag on chatroom list
 		add timestamp to appuserChatroom table
-	change order of chatroom list when new messages come info
 	move inline css to stylesheet
 		CLEAR CSS CACHE IF EDITING STYLESHEET DOES NOT WORK
 			HOLD SHIFT WHEN HITTING REFRESH BUTTON
 	refactor send message method in chathub file
-	delete chatroom
 	invite users
 	block users
 	block chatroom
 	check for better way to keep track of current user/active chatroom
+		get rid of hidden values in index.html and use global vars in site.js
 	check for repeated code
-	try to replace view model
+	try to replace view model in chathub.cs
 		try to fix self referencing loop error
 	add confirm to leave chatroom
-	when if message is received when confirm function is awaiting a click, message is not displayed and message preview in chatroom list is not updated
+	when a message is received when confirm function is awaiting a click, message is not displayed and message preview in chatroom list is not updated
+		use jquery ui confirm widget so that code execution is not paused
 	clear search data in autocomplete function
 	choose new admin based on most messages
 	when joining a chatroom, the message alerting users is displayed for other users but not for the user joining the chatroom.
@@ -32,3 +32,10 @@
 			
 	
 //CURRENT TASKS
+	delete chatroom
+		write chathub method to call removechatroom() function on all clients in group.
+		connection.on function should alert members that the chatroom has been deleted if that chatroom is currently active
+			use jquery ui confirm widget so that code execution is not paused and page stays responsive
+		write removechatroom() function
+			replace code in leavechatroom() function that clears chatroom panel and removes chatroom list item with removechatroom() function
+		call ajax function to delete chatroom

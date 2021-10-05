@@ -1,7 +1,7 @@
 ﻿"use strict";
 
 $(document).ready(function () {
-    //VARIABLES AND CODE THAT RUNS AS SOON AS THE DOM IS READY////////////////////////////////////////////////////
+    //VARIABLES AND CODE THAT RUNS AS SOON AS THE DOM IS READY///////////////////////////////////////////////////////////////////////////////////////////
     //current username and user id
     var currentUserId = $('#active_user_id').val();
     var currentUsername = $('#active_username').val();
@@ -11,20 +11,24 @@ $(document).ready(function () {
     //add custom scrollbar to chatroom list when page is loaded
     $('.contacts_body').mCustomScrollbar();
 
-    //SIGNALR CODE///////////////////////////////////////////////////////////////////////////////////////////////
+    //SIGNALR CODE////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //create signalr connection and disable send button until connection starts and the dom is ready
     var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
     $('.send_btn').prop('disabled', true);
 
-    //when a new chatroom is created each member will be added to the group
+    //This function is called on all members of a newly created chatroom
+    //It then calls AddCurrentUserToNewGroup() to add the current user to the chatroom group.
+    //This is because in order to add a user to a group, you have to add their ConnectionId to the group.
+    //Hub methods can only access the connection id of the current client.
     connection.on('AddToNewGroup', function (chatroomId) {
         connection.invoke('AddCurrentUserToNewGroup', chatroomId, currentUserId).catch(function (err) {
             return console.error(err.toString());
         });
     });
 
-    //after the current user is added to a newly created chatroom
-    //the chatroom will be displayed in the chatroom list
+    //After the current user is added to a newly created chatroom,
+    //the chatroom is fetched from the database and added to the chatroom list.
+    //The chatroom is set to active inside addChatroomToList() ONLY IF THE CURRENT USER IS THE CHATROOM ADMIN
     connection.on("AddNewChatroomToList", function (chatroomId) {
         $.ajax({
             type: 'POST',
@@ -36,24 +40,29 @@ $(document).ready(function () {
         });
     });
 
-    //Receive a message and add it to the dom
+    //Receive a message and display it in the chatroom
     connection.on("ReceiveMessage", function (messageJson) {
         var message = $.parseJSON(messageJson);
         displayMessage(message);
     });
 
-    //Receive message that alerts group on new admin and adds action menu items if current user is new admin
+    //Grants admin priveleges to the newly appointed admin by adding action icons in the action menu.
+    //This only happens if the admin is currently in the chatroom where they have been appointed as the admin.
     connection.on("GrantAdminPrivileges", function (chatroomId) {
         if (chatroomId == activeChatroomId.toString()) {
             displayActionIcons(currentUserId, "");
         }
     });
 
+    //Called when an exception is thrown in a chathub method.
+    //Displays the exception message in the console.
     connection.on('DisplayError', function (errorMessage) {
         console.log(errorMessage);
     });
 
-    //DOM FUNCTIONS////////////////////////////////////////////////////////////////////////////////////////////////display action menu items
+    //DOM FUNCTIONS/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //First clears the action menu, 
+    //then adds action menu items depending on whether the chatroom is public and if the current user is the admin.
     function displayActionIcons(adminId, isPublic) {
         $('#action_menu_list').empty();
         if (adminId == currentUserId) {
@@ -69,7 +78,14 @@ $(document).ready(function () {
         $('#action_menu_list').append(leaveChatroomLi);
     }
 
-    //display chatroom function to be called when chatroom is clicked or created
+    //Destroys the custom scrollbar.
+    //Displays the chatroom in the chatroom panel.
+    //Adds the custom scrollbar to the newly selected chatroom.
+    //When a new message is added to the chatroom the scrollbar is updated.
+    //If the user is already scrolled to the bottom of the chatroom when a new message is received,
+    //then the chatroom automatically scrolls to the bottom.
+    //Calls displayMessage for every message in the chatroom.
+    //Automatically scrolls down to the bottom of the chatroom when initially displayed.
     function displayChatroom(chatroom) {
         $('.msg_card_body').mCustomScrollbar("destroy");
         displayActionIcons(chatroom.adminId, chatroom.isPublic);
@@ -101,7 +117,9 @@ $(document).ready(function () {
         $('.msg_card_body').mCustomScrollbar("scrollTo", "bottom");
     }
 
-    //displays a message with the correct classes depending on the current user and the message's sender
+    //Displays a message with the correct classes depending on the message's userId.
+    //Updates the chatroom's custom scrollbar.
+    //Updates the message text preview and message sent time in the chatroom list.
     function displayMessage(message) {
         if (message.chatroomId == activeChatroomId) {
             var div;
@@ -132,7 +150,12 @@ $(document).ready(function () {
         $('#msg-preview-sent-' + message.chatroomId).text(moment(message.sent).calendar());
     }
 
-    //add chatroom to list
+    //Adds a newly created or joined chatroom to the chatroom list.
+    //If the admin id equals the current user id,
+    //then that means the new chatroom was created by the current user and the new chatroom is set to active.
+    //If active is set to true, that means the current user chose to join the chatroom after searching for it,
+    //then the chatroom is set to active
+    //Updates the chatroom list's custom scrollbar which was created when the page loaded.
     function addChatroomToList(chatroom, active) {
         var listItem = $('<li class="chatroomListItem" style="margin-bottom: 0; border-bottom-style:solid; border-bottom-color: lightslategrey; border-bottom-width: 1px;"></li>');
         if (chatroom.adminId == currentUserId || active == true) {
@@ -156,11 +179,11 @@ $(document).ready(function () {
             $(messageSent).text(chatroom.messages[chatroom.messages.length - 1].sent);
         }
         $('ui.contacts').prepend(listItem);
-        //$('.contacts_body .mCSB_container').prepend(listItem);
         $('.contacts_body').mCustomScrollbar("update");
     }
 
-    //AJAX FUNCTIONS//////////////////////////////////////////////////////////////////////////////////////////////
+    //AJAX FUNCTIONS////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Gets the chatroom and displays it in the chatroom panel.
     function getChatroom(id) {
         $.ajax({
             type: 'POST',
@@ -172,6 +195,7 @@ $(document).ready(function () {
         });
     }
 
+    //Creates a new chatroom, adds the members to the chatroom group, and displays the chatroom.
     function createChatroom(isPublic, chatroomName, username) {
         $.ajax({
             type: 'POST',
@@ -187,6 +211,11 @@ $(document).ready(function () {
         });
     }
 
+    //Adds the current user to the chatroom.
+    //If display is true then the current user chose to join the chatroom, and the chatroom is displayed.
+    //If display is false then the current user was added to the chatroom by someone else
+    //and the chatroom is not displayed so that the user's current activity is not disrupted.
+    //Adds the joined chatroom to the chatroom list
     function joinChatroom(chatroomId, display) {
         $.ajax({
             type: 'POST',
@@ -208,6 +237,11 @@ $(document).ready(function () {
         });
     }
 
+    //Clears the chatroom panel
+    //Removes the chatroom list item
+    //Removes the current user from the chatroom members.
+    //Alerts the other chatroom members that the user left the chatroom.
+    //If the user is the chatroom admin, alerts the other members of the new admin.
     function leaveChatroom() {
         $.ajax({
             type: 'POST',
@@ -225,13 +259,13 @@ $(document).ready(function () {
             if (result.adminChanged !== "" && result.adminId !== "") {
                 if (result.adminChanged == false) {
                     var text = currentUsername + ' left the chatroom.';
-                    connection.invoke('NonUserMessage', text, activeChatroomId.toString(), currentUserId, false).catch(function (err) {
+                    connection.invoke('SendNonUserMessage', text, activeChatroomId.toString(), currentUserId, false).catch(function (err) {
                         return console.error(err.toString());
                     });
                 }
                 if (result.adminChanged == true) {
                     var text = currentUsername + ' left, ' + result.adminUsername + ' is now the admin.';
-                    connection.invoke('NonUserMessage', text, activeChatroomId.toString(), currentUserId, true).catch(function (err) {
+                    connection.invoke('SendNonUserMessage', text, activeChatroomId.toString(), currentUserId, true).catch(function (err) {
                         return console.error(err.toString());
                     });
                 }
@@ -240,8 +274,11 @@ $(document).ready(function () {
         });
     }
 
-    //AUTOCOMPLETE FUNCTIONS//////////////////////////////////////////////////////////////////////////////////////
-    //autocomplete that runs when the user types in the search chatroom text box
+    //AUTOCOMPLETE FUNCTIONS///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Autocomplete that runs when the user types in the search chatroom text box
+    //Displays a confirm popup that asks the user if they would like to join the selected chatroom.
+    //If the user says yes, the user is added to the chatroom
+    //and the other chatroom members are alerted of the user joining the chatroom.
     $("#txtSearchChatrooms").autocomplete({
         source: function (request, response) {
             $.ajax({
@@ -269,7 +306,7 @@ $(document).ready(function () {
             if (result == true) {
                 joinChatroom(ui.item.data.chatroomId, true);    
                 var text = currentUsername + ' has joined the chatroom.';
-                connection.invoke('NonUserMessage', text, ui.item.data.chatroomId.toString(), currentUserId, false).catch(function (err) {
+                connection.invoke('SendNonUserMessage', text, ui.item.data.chatroomId.toString(), currentUserId, false).catch(function (err) {
                     return console.error(err.toString());
                 });
             }
@@ -280,25 +317,25 @@ $(document).ready(function () {
     });
 
 
-    //EVENT LISTENERS/////////////////////////////////////////////////////////////////////////////////////////////
-    //toggles the chatroom menu
+    //EVENT LISTENERS////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Toggles the action menu
     $('#action_menu_btn').click(function () {
         if (activeChatroomId) {
             $('.action_menu').toggle();
         }
     });
 
-    //create extra text box for adding members to chatroom
+    //Creates extra text box for adding members to chatroom
     $('#addMemberBtn').click(function () {
         $('<div class="row justify-content-center"></div>').insertBefore('#addMemberBtn').append('<input type="text" id="txtSearchUsers" name="username" placeholder="Chatroom Member" style="border-radius: 10px; margin-top: 10px;" class="bg-dark text-white"></input>').append('<button type="button" class="close" style="margin-right: -23px; margin-left: 10px;"><span class="text-danger">x</span></button>');
     });
 
-    //remove extra text boxes when x button is clicked
+    //Removes extra text boxes when x button is clicked
     $('#createChatroomForm').on('click', 'button.close', function (event) {
         $(this).parent().remove();
     });
 
-    //calls getchatroom which calls display chatroom
+    //When a chatroom list item is clicked, it is set to active and the chatroom is fetched and displayed.
     $('ui.contacts').on('click', 'li.chatroomListItem', function (event) {
         var chatroomId = $(this).find('.chatroom_id');
         $('.active').removeClass('active');
@@ -306,7 +343,7 @@ $(document).ready(function () {
         getChatroom(chatroomId.val());
     });
 
-    //calls create chatroom and clears the form in the popup
+    //Calls create chatroom and clears the form in the create chatroom modal
     $('#createChatroomBtn').on('click', function (event) {
         event.preventDefault();
         var isPublic = $('input[name="isPublic"]:checked', '#createChatroomForm').val();
@@ -325,7 +362,7 @@ $(document).ready(function () {
         $('input[name="username"]').val('');
     });
 
-    //calls send message
+    //Sends a message to the chatroom.
     $('#send-msg-btn').on('click', function (event) {
         event.preventDefault();
         var messageText = $('textarea[name="new-message"]').val();
