@@ -54,6 +54,14 @@ $(document).ready(function () {
         }
     });
 
+    //Called on all clients in a group when the admin deletes the chatroom
+    //Alerts teh users that the chatroom has been deleted.
+    //Calls removeChatroom()
+    connection.on('RemoveChatroom', function (chatroomId) {
+        if (activeChatroomId == chatroomId) alert("The chatroom has been deleted by the admin.");
+        removeChatroom(chatroomId);
+    });
+
     //Called when an exception is thrown in a chathub method.
     //Displays the exception message in the console.
     connection.on('DisplayError', function (errorMessage) {
@@ -157,10 +165,11 @@ $(document).ready(function () {
     //then the chatroom is set to active
     //Updates the chatroom list's custom scrollbar which was created when the page loaded.
     function addChatroomToList(chatroom, active) {
-        var listItem = $('<li class="chatroomListItem" style="margin-bottom: 0; border-bottom-style:solid; border-bottom-color: lightslategrey; border-bottom-width: 1px;"></li>');
+        var listItem = $('<li id="chatroom-list-item-' + chatroom.chatroomId + '" class="chatroomListItem" style="margin-bottom: 0; border-bottom-style:solid; border-bottom-color: lightslategrey; border-bottom-width: 1px;"></li>');
         if (chatroom.adminId == currentUserId || active == true) {
             $('.active').removeClass('active');
             $(listItem).addClass('active');
+            activeChatroomId = chatroom.chatroomId;
         }
         var div1 = $('<div class="d-flex bd-highlight"></div>');
         var div2 = $('<div class="user_info col-11"></div>');
@@ -180,6 +189,19 @@ $(document).ready(function () {
         }
         $('ui.contacts').prepend(listItem);
         $('.contacts_body').mCustomScrollbar("update");
+    }
+
+    //Clears the chatroom panel
+    //Emptys the action menu
+    //Removes the chatroom list item
+    function removeChatroom(chatroomId) {
+        $('li#chatroom-list-item-' + chatroomId).remove();
+        $('#action_menu_list').empty();
+        $('.chat_chatroom_name').text('');
+        $('.message_count').text('');
+        $('.members_count').text('');
+        $('.msg_card_body').mCustomScrollbar("destroy");
+        $('.msg_card_body').empty();
     }
 
     //AJAX FUNCTIONS////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -249,13 +271,7 @@ $(document).ready(function () {
             data: { 'chatroomId': activeChatroomId },
             dataType: 'json'
         }).done(function (result) {
-            $('li.active').remove();
-            $('#action_menu_list').empty();
-            $('.chat_chatroom_name').text('');
-            $('.message_count').text('');
-            $('.members_count').text('');
-            $('.msg_card_body').mCustomScrollbar("destroy");
-            $('.msg_card_body').empty();
+            removeChatroom(activeChatroomId);
             if (result.adminChanged !== "" && result.adminId !== "") {
                 if (result.adminChanged == false) {
                     var text = currentUsername + ' left the chatroom.';
@@ -271,6 +287,20 @@ $(document).ready(function () {
                 }
             }
             activeChatroomId = null;
+        });
+    }
+
+    //Deletes the chatroom from the database
+    //Calls function on all group members to remove chatroom
+    function deleteChatroom(chatroomId) {
+        $.ajax({
+            type: 'POST',
+            url: '../Home/DeleteChatroom',
+            data: { 'chatroomId': chatroomId }
+        }).done(function () {
+            connection.invoke('RemoveChatroom', chatroomId.toString(), currentUserId).catch(function (err) {
+                return console.error(err.toString());
+            });
         });
     }
 
@@ -337,10 +367,12 @@ $(document).ready(function () {
 
     //When a chatroom list item is clicked, it is set to active and the chatroom is fetched and displayed.
     $('ui.contacts').on('click', 'li.chatroomListItem', function (event) {
-        var chatroomId = $(this).find('.chatroom_id');
-        $('.active').removeClass('active');
-        $(this).addClass('active');
-        getChatroom(chatroomId.val());
+        if (!$(this).hasClass('active')) {
+            var chatroomId = $(this).find('.chatroom_id');
+            $('.active').removeClass('active');
+            $(this).addClass('active');
+            getChatroom(chatroomId.val());
+        }
     });
 
     //Calls create chatroom and clears the form in the create chatroom modal
@@ -377,7 +409,8 @@ $(document).ready(function () {
 
     //delete chatroom
     $('#action_menu_list').on('click', '#delete_chatroom_li', function (event) {
-
+        $('.action_menu').toggle();
+        deleteChatroom(activeChatroomId);
     });
 
     //block user

@@ -74,7 +74,7 @@ else
                         <ui class="contacts">
                             @foreach (Chatroom room in Model.Chatrooms)
                             {
-                                <li class="chatroomListItem" style="margin-bottom: 0; border-bottom-style:solid; border-bottom-color: lightslategrey; border-bottom-width: 1px;">
+                                <li id="chatroom-list-item-@room.ChatroomId" class="chatroomListItem" style="margin-bottom: 0; border-bottom-style:solid; border-bottom-color: lightslategrey; border-bottom-width: 1px;">
                                     <div class="d-flex bd-highlight">
                                         <div class="user_info col-11">
                                             <input type="hidden" class="chatroom_id" value="@room.ChatroomId" />

@@ -130,5 +130,17 @@ namespace SignalRChat.Hubs
                 await Clients.User(userId).SendAsync("DisplayError", ex.Message);
             }
         }
+
+        public async Task RemoveChatroom(string chatroomId, string userId)
+        {
+            try
+            {
+                await Clients.Group(chatroomId).SendAsync("RemoveChatroom", chatroomId);
+            }
+            catch(Exception ex)
+            {
+                await Clients.User(userId).SendAsync("DisplayError", ex.Message);
+            }
+        }
     }
 }
