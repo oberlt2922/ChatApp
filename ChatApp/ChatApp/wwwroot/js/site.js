@@ -353,6 +353,7 @@ $(document).ready(function () {
         },
         close: function () {
             $('#txtSearchChatrooms').val('');
+            $('#txtSearchChatrooms').data().uiAutocomplete.term = null;
         }
     });
 
