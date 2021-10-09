@@ -24,7 +24,6 @@
 	move inline css to stylesheet
 		CLEAR CSS CACHE IF EDITING STYLESHEET DOES NOT WORK
 			HOLD SHIFT WHEN HITTING REFRESH BUTTON
-	reset autocomplete input data even when a chatroom is not selected
 			
 	Firefox error:	
 	XML Parsing Error: no root element found

@@ -359,7 +359,6 @@ $(document).ready(function () {
                             .catch(function (err) {
                             return console.error(err.toString());
                         });
-                        //joinChatroom(ui.item.data.chatroomId, true);
                     },
                     cancel: function () {
                         $.alert('Canceled!');
