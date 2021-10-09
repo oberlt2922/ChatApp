@@ -147,15 +147,15 @@ namespace SignalRChat.Hubs
         /// </summary>
         /// <param name="chatroomId">The id of the chatroom being removed</param>
         /// <param name="userId"> the id of the current user for exception handling</param>
-        public async Task RemoveChatroom(string chatroomId, string userId)
+        public async Task RemoveChatroom(string chatroomId, string adminId)
         {
             try
             {
-                await Clients.Group(chatroomId).SendAsync("RemoveChatroom", chatroomId);
+                await Clients.Group(chatroomId).SendAsync("RemoveChatroom", chatroomId, adminId);
             }
             catch(Exception ex)
             {
-                await Clients.User(userId).SendAsync("DisplayError", ex.Message);
+                await Clients.User(adminId).SendAsync("DisplayError", ex.Message);
             }
         }
     }

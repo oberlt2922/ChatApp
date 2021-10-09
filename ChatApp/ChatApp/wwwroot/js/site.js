@@ -58,18 +58,23 @@ $(document).ready(function () {
     //Removes the current user from the SignalR group
     //Alerts teh users that the chatroom has been deleted if the chatroom is currently active.
     //Calls removeChatroom()
-    connection.on('RemoveChatroom', function (chatroomId) {
-        connection.invoke('RemoveCurrentUserFromGroup', chatroomId).catch(function (err) {
+    connection.on('RemoveChatroom', function (chatroomId, adminId) {
+        connection.invoke('RemoveCurrentUserFromGroup', chatroomId, adminId).catch(function (err) {
             return console.error(err.toString());
         });
-        if (activeChatroomId == chatroomId) alert("The chatroom has been deleted by the admin.");
+        if (activeChatroomId == chatroomId && currentUserId != adminId) {
+            $.alert({
+                title: 'Uh-Oh!',
+                content: 'The admin deleted this chatroom!',
+            });
+        }
         removeChatroom(chatroomId);
     });
 
     //Called when an exception is thrown in a chathub method.
     //Displays the exception message in the console.
     connection.on('DisplayError', function (errorMessage) {
-        console.log(errorMessage);
+        console.error(errorMessage);
     });
 
     //DOM FUNCTIONS/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -342,14 +347,22 @@ $(document).ready(function () {
         },
         minLength: 2,
         select: function (event, ui) {
-            var result = confirm('Would you like to join the chatroom \"' + ui.item.data.chatroomName + '\"\?');
-            if (result == true) {
-                joinChatroom(ui.item.data.chatroomId, true);    
-                var text = currentUsername + ' has joined the chatroom.';
-                connection.invoke('SendNonUserMessage', text, ui.item.data.chatroomId.toString(), currentUserId, false).catch(function (err) {
-                    return console.error(err.toString());
-                });
-            }
+            $.confirm({
+                title: 'Join this chatroom?',
+                content: 'You are about to to join the chatroom \"' + ui.item.data.chatroomName + '\".',
+                buttons: {
+                    confirm: function () {
+                        joinChatroom(ui.item.data.chatroomId, true);
+                        var text = currentUsername + ' has joined the chatroom.';
+                        connection.invoke('SendNonUserMessage', text, ui.item.data.chatroomId.toString(), currentUserId, false).catch(function (err) {
+                            return console.error(err.toString());
+                        });
+                    },
+                    cancel: function () {
+                        $.alert('Canceled!');
+                    }
+                }
+            });
         },
         close: function () {
             $('#txtSearchChatrooms').val('');
@@ -420,8 +433,19 @@ $(document).ready(function () {
 
     //delete chatroom
     $('#action_menu_list').on('click', '#delete_chatroom_li', function (event) {
-        $('.action_menu').toggle();
-        deleteChatroom(activeChatroomId);
+        $.confirm({
+            title: 'Wanna delete the chatroom?',
+            content: 'Are you sure you want to delete this chatroom?',
+            buttons: {
+                confirm: function () {
+                    $('.action_menu').toggle();
+                    deleteChatroom(activeChatroomId);
+                },
+                cancel: function () {
+                    $.alert('Canceled!');
+                }
+            }
+        });
     });
 
     //block user
@@ -436,8 +460,19 @@ $(document).ready(function () {
 
     //leave chatroom
     $('#action_menu_list').on('click', '#leave_chatroom_li', function (event) {
-        $('.action_menu').toggle();
-        leaveChatroom();
+        $.confirm({
+            title: 'Are you leaving? :(',
+            content: 'Are you sure you want to leave this chatroom?',
+            buttons: {
+                confirm: function () {
+                    $('.action_menu').toggle();
+                    leaveChatroom();
+                },
+                cancel: function () {
+                    $.alert('Canceled!');
+                }
+            }
+        });
     });
 
     //START SIGNALR CONNECTION/////////////////////////////////////////////////////////////////////////////////////

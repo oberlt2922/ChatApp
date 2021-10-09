@@ -24,6 +24,15 @@
         "mCSB_buttons.png",
         "jquery.mCustomScrollbar.css"
       ]
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jquery-confirm@3.3.4",
+      "destination": "wwwroot/lib/jquery-confirm/",
+      "files": [
+        "jquery-confirm.min.js",
+        "jquery-confirm.min.css"
+      ]
     }
   ]
 }
