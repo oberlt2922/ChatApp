@@ -351,11 +351,15 @@ $(document).ready(function () {
                 content: 'You are about to to join the chatroom \"' + ui.item.data.chatroomName + '\".',
                 buttons: {
                     confirm: function () {
-                        joinChatroom(ui.item.data.chatroomId, true);
                         var text = currentUsername + ' has joined the chatroom.';
-                        connection.invoke('SendNonUserMessage', text, ui.item.data.chatroomId.toString(), currentUserId, false).catch(function (err) {
+                        connection.invoke('SendNonUserMessage', text, ui.item.data.chatroomId.toString(), currentUserId, false)
+                            .then(function () {
+                                joinChatroom(ui.item.data.chatroomId, true);
+                            })
+                            .catch(function (err) {
                             return console.error(err.toString());
                         });
+                        //joinChatroom(ui.item.data.chatroomId, true);
                     },
                     cancel: function () {
                         $.alert('Canceled!');
