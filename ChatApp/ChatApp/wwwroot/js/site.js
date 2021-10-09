@@ -55,7 +55,8 @@ $(document).ready(function () {
     });
 
     //Called on all clients in a group when the admin deletes the chatroom
-    //Alerts teh users that the chatroom has been deleted.
+    //Removes the current user from the SignalR group
+    //Alerts teh users that the chatroom has been deleted if the chatroom is currently active.
     //Calls removeChatroom()
     connection.on('RemoveChatroom', function (chatroomId) {
         connection.invoke('RemoveCurrentUserFromGroup', chatroomId).catch(function (err) {
@@ -267,6 +268,7 @@ $(document).ready(function () {
     //Clears the chatroom panel
     //Removes the chatroom list item
     //Removes the current user from the chatroom members.
+    //Removes the current user from the SignalR group
     //Alerts the other chatroom members that the user left the chatroom.
     //If the user is the chatroom admin, alerts the other members of the new admin.
     function leaveChatroom() {

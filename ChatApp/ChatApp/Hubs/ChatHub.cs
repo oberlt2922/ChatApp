@@ -141,6 +141,12 @@ namespace SignalRChat.Hubs
             }
         }
 
+
+        /// <summary>
+        /// When a chatroom is deleted the connection.on RemoveChatroom function is called on all clients
+        /// </summary>
+        /// <param name="chatroomId">The id of the chatroom being removed</param>
+        /// <param name="userId"> the id of the current user for exception handling</param>
         public async Task RemoveChatroom(string chatroomId, string userId)
         {
             try
