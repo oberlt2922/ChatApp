@@ -59,7 +59,7 @@ $(document).ready(function () {
     //Alerts teh users that the chatroom has been deleted if the chatroom is currently active.
     //Calls removeChatroom()
     connection.on('RemoveChatroom', function (chatroomId, adminId) {
-        connection.invoke('RemoveCurrentUserFromGroup', chatroomId, adminId).catch(function (err) {
+        connection.invoke('RemoveCurrentUserFromGroup', chatroomId).catch(function (err) {
             return console.error(err.toString());
         });
         if (activeChatroomId == chatroomId && currentUserId != adminId) {
@@ -106,7 +106,6 @@ $(document).ready(function () {
     function displayChatroom(chatroom) {
         $('.msg_card_body').mCustomScrollbar("destroy");
         displayActionIcons(chatroom.adminId, chatroom.isPublic);
-        $('#active_chatroom_id').val(chatroom.chatroomId);
         activeChatroomId = chatroom.chatroomId;
         $('.chat_chatroom_name').text(chatroom.chatroomName);
         $('.message_count').text(chatroom.messages.length + ' Messages');
@@ -422,7 +421,6 @@ $(document).ready(function () {
     $('#send-msg-btn').on('click', function (event) {
         event.preventDefault();
         var messageText = $('textarea[name="new-message"]').val();
-        activeChatroomId = $('#active_chatroom_id').val();
         if (activeChatroomId && messageText) {
             connection.invoke('SendMessage', messageText, currentUserId.toString(), activeChatroomId.toString()).catch(function (err) {
                 return console.error(err.toString());

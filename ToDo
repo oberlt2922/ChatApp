@@ -1,30 +1,33 @@
 //Things to do
-	Footer is not at the bottom on home screen before login
 	Validation
 		check chatroom name
 		check if member exists or if it is current user
 		User should not be able to add themselves when creating a new chatroom
+		User should not be able to add a member more than once
 		autocomplete
 			dont show current user
 	Anti Forgery Tokens
 	new message tag on chatroom list
 		add timestamp to appuserChatroom table
-	move inline css to stylesheet
-		CLEAR CSS CACHE IF EDITING STYLESHEET DOES NOT WORK
-			HOLD SHIFT WHEN HITTING REFRESH BUTTON
 	invite users
 	block users
 	block chatroom
-	check for better way to keep track of current user/active chatroom
-		get rid of hidden values in index.html and use global vars in site.js
 	check for repeated code
 	try to fix self referencing loop error and get rid of message view model in chathub.cs methods
 	choose new admin based on most messages
-	when joining a chatroom, the message alerting users is displayed for other users but not for the user joining the chatroom.
-	replace confirm() when joining and leaving chatrooms and alert() when chatroom has been deleted with code from a notification client side library
-		this will stop code execution from being paused
 	
 			
 			
 	
 //CURRENT TASKS
+	when joining a chatroom, the message alerting users is displayed for other users but not for the user joining the chatroom.
+	Footer is not at the bottom on home screen before login
+	move inline css to stylesheet
+		CLEAR CSS CACHE IF EDITING STYLESHEET DOES NOT WORK
+			HOLD SHIFT WHEN HITTING REFRESH BUTTON
+			
+	Firefox error:	
+	XML Parsing Error: no root element found
+	Location: https://localhost:44390/Home/DeleteChatroom
+	Line Number 1, Column 1:
+	Chatroom still gets deleted and all code executes with no problem so maybe just ignore it
