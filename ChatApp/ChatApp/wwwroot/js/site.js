@@ -58,6 +58,9 @@ $(document).ready(function () {
     //Alerts teh users that the chatroom has been deleted.
     //Calls removeChatroom()
     connection.on('RemoveChatroom', function (chatroomId) {
+        connection.invoke('RemoveCurrentUserFromGroup', chatroomId).catch(function (err) {
+            return console.error(err.toString());
+        });
         if (activeChatroomId == chatroomId) alert("The chatroom has been deleted by the admin.");
         removeChatroom(chatroomId);
     });
@@ -274,6 +277,9 @@ $(document).ready(function () {
             dataType: 'json'
         }).done(function (result) {
             removeChatroom(activeChatroomId);
+            connection.invoke('RemoveCurrentUserFromGroup', activeChatroomId.toString()).catch(function (err) {
+                return console.error(err.toString());
+            });
             if (result.adminChanged !== "" && result.adminId !== "") {
                 if (result.adminChanged == false) {
                     var text = currentUsername + ' left the chatroom.';

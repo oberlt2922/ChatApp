@@ -28,7 +28,6 @@
 			
 	
 //CURRENT TASKS
-	remove members from signalR group when leaving chatroom or deleting chatroom
 	check chatroomId in joinChatroom()
 	clear search data in autocomplete function
 	add jquery confirm to leave chatroom

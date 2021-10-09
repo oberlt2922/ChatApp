@@ -55,6 +55,16 @@ namespace SignalRChat.Hubs
             await Clients.User(userId).SendAsync("AddNewChatroomToList", chatroomId);
         }
 
+
+        /// <summary>
+        /// Removes the current user from a group when a chatroom is deleted or the user leaves a chatroom.
+        /// </summary>
+        /// <param name="chatroomId">The id of the group that the user is leaving</param>
+        public async Task RemoveCurrentUserFromGroup(string chatroomId)
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, chatroomId);
+        }
+
         /// <summary>
         /// A method that sends a message from a user to the chatroom
         /// </summary>
