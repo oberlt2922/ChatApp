@@ -15,7 +15,6 @@
 	check for repeated code
 	try to fix self referencing loop error and get rid of message view model in chathub.cs methods
 	choose new admin based on most messages
-	toggle action menu when it is displayed and the user clicks somewhere else
 			
 			
 	

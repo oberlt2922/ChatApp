@@ -357,8 +357,8 @@ $(document).ready(function () {
                                 joinChatroom(ui.item.data.chatroomId, true);
                             })
                             .catch(function (err) {
-                            return console.error(err.toString());
-                        });
+                                return console.error(err.toString());
+                            });
                     },
                     cancel: function () {
                         $.alert('Canceled!');
@@ -375,8 +375,17 @@ $(document).ready(function () {
 
     //EVENT LISTENERS////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //Toggles the action menu
-    $('#action_menu_btn').click(function () {
+    $('#action_menu_btn').click(function (event) {
+        event.stopPropagation();
         if (activeChatroomId) {
+            $('.action_menu').toggle();
+        }
+    });
+
+    //Hides the action menu if it is visible and the click occurs outside the action menu
+    $(document).click(function (event) {
+        var $target = $(event.target);
+        if (!$target.closest('.action_menu').length && $('.action_menu').is(":visible")) {
             $('.action_menu').toggle();
         }
     });
@@ -434,6 +443,7 @@ $(document).ready(function () {
 
     //delete chatroom
     $('#action_menu_list').on('click', '#delete_chatroom_li', function (event) {
+        event.stopPropagation();
         $.confirm({
             title: 'Wanna delete the chatroom?',
             content: 'Are you sure you want to delete this chatroom?',
@@ -461,6 +471,7 @@ $(document).ready(function () {
 
     //leave chatroom
     $('#action_menu_list').on('click', '#leave_chatroom_li', function (event) {
+        event.stopPropagation();
         $.confirm({
             title: 'Are you leaving? :(',
             content: 'Are you sure you want to leave this chatroom?',
