@@ -9,7 +9,6 @@
 	Anti Forgery Tokens
 	new message tag on chatroom list
 		add timestamp to appuserChatroom table
-	invite users
 	block users
 	block chatroom
 	check for repeated code
@@ -19,6 +18,13 @@
 			
 	
 //CURRENT TASKS
+	invite users
+		write modal with text boxes to invite users
+		write event listener for add members button which calls ajax function
+		write ajax function to add users to chatroom
+		write action method to add users to chatroom
+			ensure that each user is not already in chatroom
+		add the new members to the signalr groups
 			
 	Firefox error:	
 	XML Parsing Error: no root element found
