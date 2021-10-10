@@ -173,7 +173,7 @@ $(document).ready(function () {
     //then the chatroom is set to active
     //Updates the chatroom list's custom scrollbar which was created when the page loaded.
     function addChatroomToList(chatroom, active) {
-        var listItem = $('<li id="chatroom-list-item-' + chatroom.chatroomId + '" class="chatroomListItem" style="margin-bottom: 0; border-bottom-style:solid; border-bottom-color: lightslategrey; border-bottom-width: 1px;"></li>');
+        var listItem = $('<li id="chatroom-list-item-' + chatroom.chatroomId + '" class="chatroomListItem"></li>');
         if (chatroom.adminId == currentUserId || active == true) {
             $('.active').removeClass('active');
             $(listItem).addClass('active');
@@ -188,8 +188,8 @@ $(document).ready(function () {
         $(div1).append(div2);
         $(div2).append(chatIdInput).append(div3);
         $(div3).append(span);
-        var messageText = $('<p id="msg-preview-txt-' + chatroom.chatroomId + '" class="message-text-preview" style="margin-bottom: 0;"></p>');
-        var messageSent = $('<p id="msg-preview-sent-' + chatroom.chatroomId + '" style="margin-bottom: 0;"></p>');
+        var messageText = $('<p id="msg-preview-txt-' + chatroom.chatroomId + '" class="message-preview"></p>');
+        var messageSent = $('<p id="msg-preview-sent-' + chatroom.chatroomId + '" class="message-preview"></p>');
         $(div2).append(messageText).append(messageSent);
         if (!$.isEmptyObject(chatroom.messages)) {
             $(messageText).text(chatroom.messages[chatroom.messages.length - 1].text);
@@ -383,7 +383,7 @@ $(document).ready(function () {
 
     //Creates extra text box for adding members to chatroom
     $('#addMemberBtn').click(function () {
-        $('<div class="row justify-content-center"></div>').insertBefore('#addMemberBtn').append('<input type="text" id="txtSearchUsers" name="username" placeholder="Chatroom Member" style="border-radius: 10px; margin-top: 10px;" class="bg-dark text-white"></input>').append('<button type="button" class="close" style="margin-right: -23px; margin-left: 10px;"><span class="text-danger">x</span></button>');
+        $('<div class="row justify-content-center"></div>').insertBefore('#addMemberBtn').append('<input type="text" id="txtSearchUsers" name="username" placeholder="Chatroom Member" class="bg-dark text-white"></input>').append('<button type="button" class="close"><span class="text-danger">x</span></button>');
     });
 
     //Removes extra text boxes when x button is clicked

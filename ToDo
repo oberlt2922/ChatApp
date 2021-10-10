@@ -20,10 +20,6 @@
 			
 	
 //CURRENT TASKS
-	Footer is not at the bottom on home screen before login
-	move inline css to stylesheet
-		CLEAR CSS CACHE IF EDITING STYLESHEET DOES NOT WORK
-			HOLD SHIFT WHEN HITTING REFRESH BUTTON
 			
 	Firefox error:	
 	XML Parsing Error: no root element found

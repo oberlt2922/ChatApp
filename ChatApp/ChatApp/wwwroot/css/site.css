@@ -70,15 +70,52 @@ body {
   line-height: 60px; /* Vertically center the text there */
 }
 
+#isPublic-public {
+	margin-right: 15px;
+	margin-left: 5px;
+}
+
+#isPublic-private {
+	margin-left: 5px;
+}
+
+input[name="chatroomName"] {
+	border-radius: 10px;
+}
+
+input[name="username"] {
+	border-radius: 10px;
+	margin-top: 10px;
+}
+
+li.chatroomListItem {
+	margin-bottom: 0;
+	border-bottom-style: solid;
+	border-bottom-color: lightslategrey;
+	border-bottom-width: 1px;
+}
+
+p.message-preview {
+	margin-bottom: 0;
+}
+
+p.message_count {
+	margin-bottom: 0;
+}
+
+button.close {
+	margin-right: -23px;
+	margin-left: 10px;
+}
 
 /*Chatroom template styling*/
-	body,html{
-			height: 100%;
-			margin: 0;
-			background: #7F7FD5;
-	       background: -webkit-linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
-	        background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
-		}
+body, html {
+	height: 100%;
+	margin: 0;
+	background: #7F7FD5;
+	background: -webkit-linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+	background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+}
 
 		.chat{
 			margin-top: auto;

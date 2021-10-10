@@ -38,15 +38,15 @@ else
                     <form id="createChatroomForm">
                         <div class="row justify-content-center">
                             <label>Public</label>
-                            <input id="isPublic" name="isPublic" type="radio" style="margin-right: 15px; margin-left: 5px;" value="Public">
+                            <input id="isPublic-public" name="isPublic" type="radio" value="Public">
                             <label>Private</label>
-                            <input id="isPublic" name="isPublic" type="radio" style="margin-left: 5px;" value="Private">
+                            <input id="isPublic-private" name="isPublic" type="radio" value="Private">
                         </div>
                         <div class="row justify-content-center">
-                            <input type="text" name="chatroomName" class="bg-dark text-white" style="border-radius: 10px;" placeholder="Chatroom Name" />
+                            <input type="text" name="chatroomName" class="bg-dark text-white" placeholder="Chatroom Name" />
                         </div>
                         <div class="row justify-content-center">
-                            <input type="text" id="txtSearchUsers" name="username" class="bg-dark text-white" style="border-radius: 10px; margin-top:10px;" placeholder="Chatroom member" />
+                            <input type="text" id="txtSearchUsers" name="username" placeholder="Chatroom member" class="bg-dark text-white" />
                         </div>
                         <div id="addMemberBtn" class="row justify-content-center">
                             <button type="button" class="btn btn-link">Add another member</button>
@@ -74,7 +74,7 @@ else
                         <ui class="contacts">
                             @foreach (Chatroom room in Model.Chatrooms)
                             {
-                                <li id="chatroom-list-item-@room.ChatroomId" class="chatroomListItem" style="margin-bottom: 0; border-bottom-style:solid; border-bottom-color: lightslategrey; border-bottom-width: 1px;">
+                                <li id="chatroom-list-item-@room.ChatroomId" class="chatroomListItem">
                                     <div class="d-flex bd-highlight">
                                         <div class="user_info col-11">
                                             <input type="hidden" class="chatroom_id" value="@room.ChatroomId" />
@@ -83,8 +83,8 @@ else
                                             </div>
                                             @if (room.Messages.Count > 0)
                                             {
-                                                <p id="msg-preview-txt-@room.ChatroomId" class="message-text-preview" style="margin-bottom: 0;">@room.Messages[room.Messages.Count - 1].Text</p>
-                                                <p id="msg-preview-sent-@room.ChatroomId" style="margin-bottom: 0;">
+                                                <p id="msg-preview-txt-@room.ChatroomId" class="message-preview">@room.Messages[room.Messages.Count - 1].Text</p>
+                                                <p id="msg-preview-sent-@room.ChatroomId" class="message-preview">
                                                     <script>
                                                         document.write(moment("@room.Messages[room.Messages.Count - 1].Sent").calendar());
                                                     </script>
@@ -93,8 +93,8 @@ else
                                             else
                                             {
                                                 
-                                                <p id="msg-preview-txt-@room.ChatroomId" class="message-text-preview" style="margin-bottom: 0;"></p>
-                                                <p id="msg-preview-sent-@room.ChatroomId" style="margin-bottom: 0;"></p>
+                                                <p id="msg-preview-txt-@room.ChatroomId" class="message-preview"></p>
+                                                <p id="msg-preview-sent-@room.ChatroomId" class="message-preview"></p>
                                             }
                                             </div>
                                     </div>
@@ -103,7 +103,7 @@ else
                         </ui>
                     </div>
                     <div class="card-footer text-center">
-                        <button type="button" class="btn btn-primary rounded-pill" style="border-radius: 40px;" data-toggle="modal" data-target="#newChatroomModal">Create new chatroom</button>
+                        <button type="button" class="btn btn-primary rounded-pill" data-toggle="modal" data-target="#newChatroomModal">Create new chatroom</button>
                     </div>
                 </div>
             </div>
@@ -114,7 +114,7 @@ else
                         <div class="d-flex bd-highlight">
                             <div class="user_info">
                                 <span class="chat_chatroom_name"></span>
-                                <p class="message_count" style="margin-bottom: 0;"></p>
+                                <p class="message_count"></p>
                                 <p class="members_count"></p>
                             </div>
                         </div>
