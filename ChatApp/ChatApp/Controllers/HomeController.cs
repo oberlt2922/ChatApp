@@ -53,10 +53,10 @@ namespace ChatApp.Controllers
         /// </summary>
         /// <param name="isPublic">If the chatroom is public or private</param>
         /// <param name="chatroomName">The name of the chatroom</param>
-        /// <param name="username">An array of the usernames that the creator of the chatroom entered</param>
+        /// <param name="usernames">An array of the usernames that the creator of the chatroom entered</param>
         /// <returns>Returns the created chatroom as json object</returns>
         [HttpPost]
-        public async Task<JsonResult> CreateChatroom(string isPublic, string chatroomName, string[] username)
+        public async Task<JsonResult> CreateChatroom(string isPublic, string chatroomName, string[] usernames)
         {
             Chatroom room = new Chatroom();
             AppUser currentUser = await _userManager.GetUserAsync(User);
@@ -66,7 +66,7 @@ namespace ChatApp.Controllers
             room.Members = new List<AppUser>();
             room.Messages = new List<Message>();
             room.Members.Add(currentUser);
-            foreach (string user in username)
+            foreach (string user in usernames)
             {
                 AppUser member = await _context.AppUser.SingleOrDefaultAsync(a => a.UserName == user);
                 if (member != null)
@@ -77,6 +77,31 @@ namespace ChatApp.Controllers
             _context.Chatroom.Add(room);
             _context.SaveChanges();
             return GetChatroom(room.ChatroomId.ToString());
+        }
+
+        /// <summary>
+        /// Adds members to a chatroom
+        /// </summary>
+        /// <param name="chatroomId">The id of the chatroom that the members are being added to</param>
+        /// <param name="members">The usernames of the members being added to the chatroom</param>
+        /// <returns>Returns the chatroom id and the new members' ids as json object</returns>
+        [HttpPost]
+        public async Task<JsonResult> AddMembers(string chatroomId, string[] usernames)
+        {
+            Chatroom room = _context.Chatroom.Where(c => c.ChatroomId == Convert.ToInt32(chatroomId))
+                .Include(c => c.Members).Single();
+            var returnObject = new { chatroomId = chatroomId, members = new List<AppUser>() };
+            foreach (string user in usernames)
+            {
+                AppUser member = await _context.AppUser.SingleOrDefaultAsync(a => a.UserName == user);
+                if (member != null)
+                {
+                    returnObject.members.Add(member);
+                    room.Members.Add(member);
+                }
+            }
+            _context.SaveChanges();
+            return Json(returnObject);
         }
 
         //Fetches and returns the chatroom as Json

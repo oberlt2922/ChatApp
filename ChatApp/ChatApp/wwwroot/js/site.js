@@ -228,11 +228,11 @@ $(document).ready(function () {
     }
 
     //Creates a new chatroom, adds the members to the chatroom group, and displays the chatroom.
-    function createChatroom(isPublic, chatroomName, username) {
+    function createChatroom(isPublic, chatroomName, usernames) {
         $.ajax({
             type: 'POST',
             url: '../Home/CreateChatroom',
-            data: { 'isPublic': isPublic, 'chatroomName': chatroomName, 'username': username },
+            data: { 'isPublic': isPublic, 'chatroomName': chatroomName, 'usernames': usernames },
             datatype: 'json'
         }).done(function (result) {
             var members = JSON.stringify(result.members);
@@ -240,6 +240,21 @@ $(document).ready(function () {
                 return console.error(err.toString());
             });
             displayChatroom(result);
+        });
+    }
+
+    //Adds new members to the chatroom
+    function addMembers(chatroomId, usernames) {
+        $.ajax({
+            type: 'POST',
+            url: '../Home/AddMembers',
+            data: { 'chatroomId': chatroomId, 'usernames': usernames },
+            datatype: 'json'
+        }).done(function (result) {
+            var members = JSON.stringify(result.members);
+            connection.invoke('AddMembersToGroup', result.chatroomId.toString(), members).catch(function (err) {
+                return console.error(err.toString());
+            });
         });
     }
 
@@ -416,7 +431,7 @@ $(document).ready(function () {
         var isPublic = $('input[name="isPublic"]:checked', '#createChatroomForm').val();
         var chatroomName = $('input[name="chatroomName"]').val();
         var members = new Array();
-        $('input[name="username"]').each(function () {
+        $('#createChatroomForm input[name="username"]').each(function () {
             members.push($(this).val());
         });
         createChatroom(isPublic, chatroomName, members);
@@ -426,7 +441,22 @@ $(document).ready(function () {
         $.each(closeButtons, function (index, button) {
             $(button).parent().remove();
         });
-        $('input[name="username"]').val('');
+        $('#createChatroomForm input[name="username"]').val('');
+    });
+
+    //Calls add members and clears the form in the add members modal
+    $('#addMembersBtn').on('click', function (event) {
+        event.preventDefault();
+        var usernames = new Array();
+        $('#addMembersForm input[name="username"]').each(function () {
+            usernames.push($(this).val());
+        });
+        addMembers(activeChatroomId, usernames);
+        var closeButtons = $('#addMembersForm').find('button.close');
+        $.each(closeButtons, function (index, button) {
+            $(button).parent().remove();
+        });
+        $('#addMembersForm input[name="username"]').val('');
     });
 
     //Sends a message to the chatroom.
