@@ -11,10 +11,11 @@
 		options:
 			Viewmodel (server side validation)
 				pros:  can use asp-validation-for spans
-				cons:  will have to check usernames in action method, might not be able to set modelstate and display error messages from controller
+				cons:  might not be able to check usernames with asp-validation-for, might not be able to set modelstate and display error messages from controller
 			Ajax functions (client side validation)
 				pros:	Could easily check all inputs
 				cons:	Will most likely have to make an ajax call for every input elemet so that individual error messages can be displayed and hidden, might be slow and inefficient
+				Try one ajax call and return a collection of booleans in the same order as all of the hidden error messages then for each bool that is true, display correct error message
 	Anti Forgery Tokens
 	new message tag on chatroom list
 		add timestamp to appuserChatroom table
