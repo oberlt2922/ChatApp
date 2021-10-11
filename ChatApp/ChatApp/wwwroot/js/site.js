@@ -494,11 +494,6 @@ $(document).ready(function () {
 
     });
 
-    //invite user
-    $('#action_menu_list').on('click', '#invite_user_li', function (event) {
-
-    });
-
     //leave chatroom
     $('#action_menu_list').on('click', '#leave_chatroom_li', function (event) {
         event.stopPropagation();

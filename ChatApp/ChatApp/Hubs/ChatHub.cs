@@ -141,7 +141,6 @@ namespace SignalRChat.Hubs
             }
         }
 
-
         /// <summary>
         /// When a chatroom is deleted the connection.on RemoveChatroom function is called on all clients
         /// </summary>
