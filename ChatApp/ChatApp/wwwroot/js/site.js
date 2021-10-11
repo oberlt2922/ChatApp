@@ -88,7 +88,7 @@ $(document).ready(function () {
             $('#action_menu_list').append(deleteChatroomLi).append(blockUserLi);
         }
         if (adminId == currentUserId || isPublic == true) {
-            var inviteUsersLi = $('<li id="invite_user_li"><i class="fas fa-users"></i> Invite users</li>');
+            var inviteUsersLi = $('<li id="invite_user_li" data-toggle="modal" data-target="#addMembersModal"><i class="fas fa-users"></i> Invite users</li>');
             $('#action_menu_list').append(inviteUsersLi);
         }
         var leaveChatroomLi = $('<li id="leave_chatroom_li"><i class="fas fa-sign-out-alt"></i> Leave chatroom</li>');
@@ -390,13 +390,13 @@ $(document).ready(function () {
         }
     });
 
-    //Creates extra text box for adding members to chatroom
-    $('#addMemberBtn').click(function () {
-        $('<div class="row justify-content-center"></div>').insertBefore('#addMemberBtn').append('<input type="text" id="txtSearchUsers" name="username" placeholder="Chatroom Member" class="bg-dark text-white"></input>').append('<button type="button" class="close"><span class="text-danger">x</span></button>');
+    //Creates extra text box with x button and inserts it before the element that fired the event
+    $('.addNewTextBoxBtn').click(function () {
+        $('<div class="row justify-content-center"></div>').insertBefore($(this).parent()).append('<input type="text" id="txtSearchUsers" name="username" placeholder="Chatroom Member" class="bg-dark text-white"></input>').append('<button type="button" class="close"><span class="text-danger">x</span></button>');
     });
 
     //Removes extra text boxes when x button is clicked
-    $('#createChatroomForm').on('click', 'button.close', function (event) {
+    $('form').on('click', 'button.close', function (event) {
         $(this).parent().remove();
     });
 

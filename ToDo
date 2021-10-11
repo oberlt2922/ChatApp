@@ -19,7 +19,6 @@
 	
 //CURRENT TASKS
 	invite users
-		write modal with text boxes to invite users
 		write event listener for add members button which calls ajax function
 		write ajax function to add users to chatroom
 		write action method to add users to chatroom

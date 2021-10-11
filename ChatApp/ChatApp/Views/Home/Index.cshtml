@@ -48,11 +48,38 @@ else
                         <div class="row justify-content-center">
                             <input type="text" id="txtSearchUsers" name="username" placeholder="Chatroom member" class="bg-dark text-white" />
                         </div>
-                        <div id="addMemberBtn" class="row justify-content-center">
-                            <button type="button" class="btn btn-link">Add another member</button>
+                        <div class="row justify-content-center">
+                            <button type="button" class="btn btn-link addNewTextBoxBtn">Add another member</button>
                         </div>
                         <div class="row justify-content-center">
                             <input id="createChatroomBtn" type="submit" class="btn btn-primary" data-dismiss="modal" value="Create" />
+                            <button type="button" class="btn btn-secondary offset-1" data-dismiss="modal">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--ADD USERS POPUP-->
+    <div class="modal fade bg-dark bg-transparent" id="addMembersModal" tabindex="-1" role="dialog" aria-labelledby="addMembersModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add new chatroom members</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span class="text-white" aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addMembersForm">
+                        <div class="row justify-content-center">
+                            <input type="text" id="txtSearchUsers" name="username" placeholder="Chatroom member" class="bg-dark text-white" />
+                        </div>
+                        <div class="row justify-content-center">
+                            <button type="button" class="btn btn-link addNewTextBoxBtn">Add another member</button>
+                        </div>
+                        <div class="row justify-content-center">
+                            <input id="addMembersBtn" type="submit" class="btn btn-primary" data-dismiss="modal" value="Add Members" />
                             <button type="button" class="btn btn-secondary offset-1" data-dismiss="modal">Close</button>
                         </div>
                     </form>
@@ -92,11 +119,11 @@ else
                                             }
                                             else
                                             {
-                                                
+
                                                 <p id="msg-preview-txt-@room.ChatroomId" class="message-preview"></p>
                                                 <p id="msg-preview-sent-@room.ChatroomId" class="message-preview"></p>
                                             }
-                                            </div>
+                                        </div>
                                     </div>
                                 </li>
                             }
