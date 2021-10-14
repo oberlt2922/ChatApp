@@ -35,5 +35,7 @@
 	
 //CURRENT TASKS
 	ensure that the member count is adjusted when new members are added to a chatroom
-	ensure that the message count is adjusted when new messages are added to a chatroom
+		when a user joins a chatroom
+		when a user is invited to a chatroom
+		
 			

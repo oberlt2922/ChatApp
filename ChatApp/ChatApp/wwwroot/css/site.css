@@ -108,6 +108,10 @@ button.close {
 	margin-left: 10px;
 }
 
+.count {
+	display: none;
+}
+
 /*Chatroom template styling*/
 body, html {
 	height: 100%;

@@ -108,8 +108,9 @@ $(document).ready(function () {
         displayActionIcons(chatroom.adminId, chatroom.isPublic);
         activeChatroomId = chatroom.chatroomId;
         $('.chat_chatroom_name').text(chatroom.chatroomName);
-        $('.message_count').text(chatroom.messages.length + ' Messages');
-        $('.members_count').text(chatroom.members.length + ' Members');
+        $('.count').show();
+        $('.message_count').text(0);
+        $('.members_count').text(chatroom.members.length);
         $('.msg_card_body').empty();
         $('.msg_card_body').mCustomScrollbar({
             callbacks: {
@@ -136,6 +137,7 @@ $(document).ready(function () {
     //Displays a message with the correct classes depending on the message's userId.
     //Updates the chatroom's custom scrollbar.
     //Updates the message text preview and message sent time in the chatroom list.
+    //Increases the message count
     function displayMessage(message) {
         if (message.chatroomId == activeChatroomId) {
             var div;
@@ -161,6 +163,8 @@ $(document).ready(function () {
             mcsContainerHeight = $('.msg_card_body .mCSB_container').height();
             $('.msg_card_body .mCSB_container').append(div);
             $('.msg_card_body').mCustomScrollbar("update");
+            var messageCount = parseInt($('.message_count').text());
+            $('.message_count').text(++messageCount);
         }
         $('#msg-preview-txt-' + message.chatroomId).text(message.text);
         $('#msg-preview-sent-' + message.chatroomId).text(moment(message.sent).calendar());
@@ -207,6 +211,7 @@ $(document).ready(function () {
         if (activeChatroomId == chatroomId) {
             $('#action_menu_list').empty();
             $('.chat_chatroom_name').text('');
+            $('.count').hide();
             $('.message_count').text('');
             $('.members_count').text('');
             $('.msg_card_body').mCustomScrollbar("destroy");
