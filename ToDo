@@ -36,5 +36,4 @@
 //CURRENT TASKS
 	ensure that the member count is adjusted when new members are added to a chatroom
 	ensure that the message count is adjusted when new messages are added to a chatroom
-	message sent format is incorrect when user is invited to chatroom
 			

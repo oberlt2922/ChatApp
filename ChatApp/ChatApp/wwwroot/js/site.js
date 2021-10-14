@@ -193,7 +193,7 @@ $(document).ready(function () {
         $(div2).append(messageText).append(messageSent);
         if (!$.isEmptyObject(chatroom.messages)) {
             $(messageText).text(chatroom.messages[chatroom.messages.length - 1].text);
-            $(messageSent).text(chatroom.messages[chatroom.messages.length - 1].sent);
+            $(messageSent).text(moment(chatroom.messages[chatroom.messages.length - 1].sent).calendar());
         }
         $('ui.contacts').prepend(listItem);
         $('.contacts_body').mCustomScrollbar("update");
