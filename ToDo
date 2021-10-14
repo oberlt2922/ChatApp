@@ -34,8 +34,5 @@
 			
 	
 //CURRENT TASKS
-	ensure that the member count is adjusted when new members are added to a chatroom
-		when a user joins a chatroom
-		when a user is invited to a chatroom
-		
+	send a 'user joined' message when a user is invited to the chatroom		
 			

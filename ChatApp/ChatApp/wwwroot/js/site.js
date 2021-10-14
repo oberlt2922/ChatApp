@@ -44,6 +44,19 @@ $(document).ready(function () {
     connection.on("ReceiveMessage", function (messageJson) {
         var message = $.parseJSON(messageJson);
         displayMessage(message);
+        if (activeChatroomId == message.chatroomId) {
+            var messageCount = parseInt($('.message_count').text());
+            $('.message_count').text(++messageCount);
+            if (message.userId == null || message.userId == '') {
+                var membersCount = parseInt($('.members_count').text());
+                if (message.text.includes('joined')) {
+                    $('.members_count').text(++membersCount);
+                }
+                else if (message.text.includes('left')) {
+                    $('.members_count').text(--membersCount);
+                }
+            }
+        }
     });
 
     //Grants admin priveleges to the newly appointed admin by adding action icons in the action menu.
@@ -109,7 +122,7 @@ $(document).ready(function () {
         activeChatroomId = chatroom.chatroomId;
         $('.chat_chatroom_name').text(chatroom.chatroomName);
         $('.count').show();
-        $('.message_count').text(0);
+        $('.message_count').text(chatroom.messages.length);
         $('.members_count').text(chatroom.members.length);
         $('.msg_card_body').empty();
         $('.msg_card_body').mCustomScrollbar({
@@ -163,8 +176,6 @@ $(document).ready(function () {
             mcsContainerHeight = $('.msg_card_body .mCSB_container').height();
             $('.msg_card_body .mCSB_container').append(div);
             $('.msg_card_body').mCustomScrollbar("update");
-            var messageCount = parseInt($('.message_count').text());
-            $('.message_count').text(++messageCount);
         }
         $('#msg-preview-txt-' + message.chatroomId).text(message.text);
         $('#msg-preview-sent-' + message.chatroomId).text(moment(message.sent).calendar());
