@@ -267,8 +267,15 @@ $(document).ready(function () {
             data: { 'chatroomId': chatroomId, 'usernames': usernames },
             datatype: 'json'
         }).done(function (result) {
-            var members = JSON.stringify(result.members);
-            connection.invoke('AddMembersToGroup', result.chatroomId.toString(), members).catch(function (err) {
+            //var membersJson = JSON.stringify(result.members);
+            //foreach member create a message 
+            $.each(result.members, function (index, member) {
+                var text = member.userName + ' has joined the chatroom.';
+                connection.invoke('SendNonUserMessage', text, chatroomId.toString(), currentUserId, false).catch(function () {
+                    return console.error(err.toString());
+                })
+            });
+            connection.invoke('AddMembersToGroup', result.chatroomId.toString(), JSON.stringify(result.members)).catch(function (err) {
                 return console.error(err.toString());
             });
         });
