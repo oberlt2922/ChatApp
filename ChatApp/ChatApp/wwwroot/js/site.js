@@ -8,6 +8,7 @@ $(document).ready(function () {
     var activeChatroomId;
     var mcsContainerHeight;
 
+
     //add custom scrollbar to chatroom list when page is loaded
     $('.contacts_body').mCustomScrollbar();
 
@@ -97,7 +98,7 @@ $(document).ready(function () {
         $('#action_menu_list').empty();
         if (adminId == currentUserId) {
             var deleteChatroomLi = $('<li id="delete_chatroom_li"><i class="fas fa-trash"></i> Delete chatroom</li>');
-            var blockUserLi = $('<li id="block_user_li"><i class="fas fa-ban"></i> Block user</li>');
+            var blockUserLi = $('<li id="block_user_li" data-toggle="modal" data-target="#blockUserModal"><i class="fas fa-ban"></i> Block user</li>');
             $('#action_menu_list').append(deleteChatroomLi).append(blockUserLi);
         }
         if (adminId == currentUserId || isPublic == true) {

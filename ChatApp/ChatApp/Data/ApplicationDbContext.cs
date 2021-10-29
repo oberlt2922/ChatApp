@@ -12,6 +12,7 @@ namespace ChatApp.Data
         public DbSet<ChatApp.Models.AppUser> AppUser { get; set; }
         public DbSet<ChatApp.Models.Chatroom> Chatroom { get; set; }
         public DbSet<ChatApp.Models.Message> Message { get; set; }
+        public DbSet<ChatApp.Models.BlockedUsers> BlockedUsers { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
