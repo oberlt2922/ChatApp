@@ -50,10 +50,11 @@ $(document).ready(function () {
             $('.message_count').text(++messageCount);
             if (message.userId == null || message.userId == '') {
                 var membersCount = parseInt($('.members_count').text());
+                activeChatroom = getChatroom(activeChatroom.chatroomId);
                 if (message.text.includes('joined')) {
                     $('.members_count').text(++membersCount);
                 }
-                else if (message.text.includes('left')) {
+                else if (message.text.includes('left') || message.text.includes('blocked')) {
                     $('.members_count').text(--membersCount);
                 }
             }
@@ -83,6 +84,18 @@ $(document).ready(function () {
             });
         }
         removeChatroom(chatroomId);
+    });
+
+    //alert user that they have been blocked if the chatroom is active
+    //remove chatroom from list and clear chatroom panel
+    //remove user from signalr group
+    connection.on('BlockUser', function (chatroomId) {
+        if (activeChatroom.chatroomId == chatroomId)
+            $.alert('You have been blocked from this chatroom.');
+        removeChatroom(chatroomId);
+        connection.invoke('RemoveCurrentUserFromGroup', chatroomId).catch(function (err) {
+            console.error(err.toString());
+        })
     });
 
     //Called when an exception is thrown in a chathub method.
@@ -266,8 +279,6 @@ $(document).ready(function () {
             data: { 'chatroomId': chatroomId, 'usernames': usernames },
             datatype: 'json'
         }).done(function (result) {
-            //var membersJson = JSON.stringify(result.members);
-            //foreach member create a message 
             $.each(result.members, function (index, member) {
                 var text = member.userName + ' has joined the chatroom.';
                 connection.invoke('SendNonUserMessage', text, chatroomId.toString(), currentUserId, false).catch(function () {
@@ -481,13 +492,22 @@ $(document).ready(function () {
         $('#addMembersForm input[name="username"]').val('');
     });
 
+    //Block user btn
+    $('#blockUserBtn').on('click', function (event) {
+        event.preventDefault();
+        var username = $('#blockUserForm input[name="username"]').val();
+        connection.invoke('BlockUser', username, activeChatroom.chatroomId.toString(), currentUserId).catch(function (err) {
+            console.error(err.toString());
+        });
+    });
+
     //Sends a message to the chatroom.
     $('#send-msg-btn').on('click', function (event) {
         event.preventDefault();
         var messageText = $('textarea[name="new-message"]').val();
         if (activeChatroom.chatroomId && messageText) {
             connection.invoke('SendMessage', messageText, currentUserId.toString(), activeChatroom.chatroomId.toString()).catch(function (err) {
-                return console.error(err.toString());
+                console.error(err.toString());
             });
             $('textarea[name="new-message"]').val('');
         }
@@ -509,11 +529,6 @@ $(document).ready(function () {
                 }
             }
         });
-    });
-
-    //block user
-    $('#action_menu_list').on('click', '#block_user_li', function (event) {
-
     });
 
     //leave chatroom

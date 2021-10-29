@@ -157,5 +157,28 @@ namespace SignalRChat.Hubs
                 await Clients.User(adminId).SendAsync("DisplayError", ex.Message);
             }
         }
+
+        public async Task BlockUser(string username, string chatroomId, string currentUserId)
+        {
+
+            try
+            {
+                AppUser blockedUser = _context.AppUser.Where(u => u.UserName == username).FirstOrDefault();
+                Chatroom room = await _context.Chatroom.Include(c => c.Members).SingleAsync(c => c.ChatroomId == Convert.ToInt32(chatroomId));
+                room.Members.Remove(blockedUser);
+                BlockedUsers blockedUserRecord = new BlockedUsers();
+                blockedUserRecord.ChatroomId = Convert.ToInt32(chatroomId);
+                blockedUserRecord.UserId = blockedUser.Id;
+
+                await Clients.User(blockedUser.Id).SendAsync("BlockUser", room.ChatroomId);
+
+                await SendNonUserMessage($"{username} has been blocked from the chatroom.", room.ChatroomId.ToString(), currentUserId, false);
+            }
+            catch (Exception ex)
+            {
+
+                await Clients.User(currentUserId).SendAsync("DisplayError", ex.Message);
+            }
+        }
     }
 }

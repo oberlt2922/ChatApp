@@ -39,18 +39,8 @@
 			
 	
 //CURRENT TASKS
-	block users from chatroom
-		add relation model
-			add dbset to dbcontext class
-		when block user is clicked, a modal with one and only one text box should be displayed
-		when the user being blocked is entered
-			ajax get chatroom members
-			if user is member of chatroom
-				send signalr message to user being blocked
-					remove the chatroom from the list of the user who is blocked
-					if the user is currently viewing the chatroom, the chatroom panel should be cleared and the user should be alerted that they have been blocked
-					the user being blocked should be removed from the signalr group
-		ajax remove the user from the chatroom members and create an entity in the relation table
-		send message to chatroom alerting members that the user has been blocked
+	clear txt box after blocking user
+	delete chatroom has a bug
+	message preview is not updated when the chatroom is not displayed
 		
 			
