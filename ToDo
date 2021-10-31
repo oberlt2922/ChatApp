@@ -42,5 +42,7 @@
 	clear txt box after blocking user
 	delete chatroom has a bug
 	message preview is not updated when the chatroom is not displayed
+	when inviting users, dont add blocked users
+	when searching for chatrooms, dont display chatrooms that the user has been blocked from
 		
 			
