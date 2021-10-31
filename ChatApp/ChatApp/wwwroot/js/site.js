@@ -50,7 +50,6 @@ $(document).ready(function () {
             $('.message_count').text(++messageCount);
             if (message.userId == null || message.userId == '') {
                 var membersCount = parseInt($('.members_count').text());
-                activeChatroom = getChatroom(activeChatroom.chatroomId);
                 if (message.text.includes('joined')) {
                     $('.members_count').text(++membersCount);
                 }
@@ -166,7 +165,7 @@ $(document).ready(function () {
     //Updates the message text preview and message sent time in the chatroom list.
     //Increases the message count
     function displayMessage(message) {
-        if (message.chatroomId == activeChatroom.chatroomId) {
+        if (activeChatroom && message.chatroomId == activeChatroom.chatroomId) {
             var div;
             if (message.userId == null || message.userId == "") {
                 div = $('<div class="d-flex mb-4 justify-content-center bg-dark bg-transparent"></div>');
@@ -241,6 +240,7 @@ $(document).ready(function () {
             $('.members_count').text('');
             $('.msg_card_body').mCustomScrollbar("destroy");
             $('.msg_card_body').empty();
+            activeChatroom = null;
         }
     }
 
@@ -330,7 +330,6 @@ $(document).ready(function () {
             data: { 'chatroomId': activeChatroom.chatroomId },
             dataType: 'json'
         }).done(function (result) {
-            removeChatroom(activeChatroom.chatroomId);
             connection.invoke('RemoveCurrentUserFromGroup', activeChatroom.chatroomId.toString()).catch(function (err) {
                 return console.error(err.toString());
             });
@@ -348,7 +347,7 @@ $(document).ready(function () {
                     });
                 }
             }
-            activeChatroom = null;
+            removeChatroom(activeChatroom.chatroomId);
         });
     }
 
@@ -495,10 +494,11 @@ $(document).ready(function () {
     //Block user btn
     $('#blockUserBtn').on('click', function (event) {
         event.preventDefault();
-        var username = $('#blockUserForm input[name="username"]').val();
-        connection.invoke('BlockUser', username, activeChatroom.chatroomId.toString(), currentUserId).catch(function (err) {
+        var username = $('#blockUserForm input[name="username"]');
+        connection.invoke('BlockUser', $(username).val(), activeChatroom.chatroomId.toString(), currentUserId).catch(function (err) {
             console.error(err.toString());
         });
+        $(username).val('');
     });
 
     //Sends a message to the chatroom.
