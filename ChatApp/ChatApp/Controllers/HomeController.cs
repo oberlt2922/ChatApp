@@ -119,6 +119,7 @@ namespace ChatApp.Controllers
         [HttpPost]
         public async Task<JsonResult> AutoCompleteChatroom(string prefix, string userId)
         {
+            var currentUserId = _userManager.GetUserId(User);
             List<Chatroom> returnList = new List<Chatroom>();
             List<Chatroom> chatrooms = await _context.Chatroom
                 .Include(Chatroom => Chatroom.Members)

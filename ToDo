@@ -31,6 +31,7 @@
 		attached to bottom variable to determine if the chatroom should automatically scroll down when messages are received
 		if when the user scrolls up, the attached to bottom variable should be set to false and a icon that says "scroll to bottom" should be displayed
 		when the icon is clicked, the attached to bottom var should be set to true and the chatroom should scroll down.
+	when inviting users, dont add blocked users
 	Firefox error:	
 		XML Parsing Error: no root element found
 		Location: https://localhost:44390/Home/DeleteChatroom
@@ -39,7 +40,6 @@
 			
 	
 //CURRENT TASKS
-	when inviting users, dont add blocked users
 	when searching for chatrooms, dont display chatrooms that the user has been blocked from
 		
 			
