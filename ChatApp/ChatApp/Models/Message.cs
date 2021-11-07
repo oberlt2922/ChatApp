@@ -20,5 +20,24 @@ namespace ChatApp.Models
         [Required]
         public int ChatroomId { get; set; }
         public virtual Chatroom Room { get; set; }
+
+        public Message(string text, DateTime sent, Chatroom room)
+        {
+            this.Text = text;
+            this.Sent = sent;
+            this.ChatroomId = room.ChatroomId;
+            this.Room = room;
+        }
+
+        public Message(string text, DateTime sent, AppUser sender, Chatroom room)
+        {
+            this.Text = text;
+            this.Sent = sent;
+            this.Username = sender.UserName;
+            this.UserId = sender.Id;
+            this.Sender = sender;
+            this.ChatroomId = room.ChatroomId;
+            this.Room = room;
+        }
     }
 }

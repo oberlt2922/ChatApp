@@ -10,5 +10,11 @@ namespace ChatApp.Models
         public int Id { get; set; }
         public string UserId { get; set; }
         public int ChatroomId { get; set; }
+
+        public BlockedUsers(string userId, int chatromId)
+        {
+            this.UserId = userId;
+            this.ChatroomId = chatromId;
+        }
     }
 }

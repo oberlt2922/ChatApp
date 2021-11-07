@@ -18,5 +18,21 @@ namespace ChatApp.Models
         public string Text { get; set; }
         [JsonProperty("chatroomId")]
         public string ChatroomId { get; set; }
+
+        public MessageVM(string text, DateTime sent, string chatroomId)
+        {
+            this.Text = text;
+            this.Sent = sent;
+            this.ChatroomId = chatroomId;
+        }
+
+        public MessageVM(string text, DateTime sent, string chatroomId, string userId, string username)
+        {
+            this.Text = text;
+            this.Sent = sent;
+            this.ChatroomId = chatroomId;
+            this.UserId = userId;
+            this.Username = username;
+        }
     }
 }

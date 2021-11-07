@@ -58,13 +58,8 @@ namespace ChatApp.Controllers
         [HttpPost]
         public async Task<JsonResult> CreateChatroom(string isPublic, string chatroomName, string[] usernames)
         {
-            Chatroom room = new Chatroom();
             AppUser currentUser = await _userManager.GetUserAsync(User);
-            room.AdminId = currentUser.Id;
-            room.ChatroomName = chatroomName;
-            room.IsPublic = (isPublic == "Public") ? true : false;
-            room.Members = new List<AppUser>();
-            room.Messages = new List<Message>();
+            Chatroom room = new Chatroom(chatroomName, currentUser.Id, isPublic == "Public" ? true: false, new List<AppUser>(), new List<Message>());
             room.Members.Add(currentUser);
             foreach (string user in usernames)
             {

@@ -71,31 +71,19 @@ namespace SignalRChat.Hubs
         /// <param name="messageText">The text that was entered by the user</param>
         /// <param name="userId">The id of the user who sent the message</param>
         /// <param name="chatroomId">The id of the chatroom that the message is being sent to</param>
-        public async Task SendMessage(string messageText, string userId, string chatroomId)
+        public async Task SendMessage(string text, string userId, string chatroomId)
         {
             try
             {
                 AppUser currentUser = await _context.AppUser.SingleOrDefaultAsync(user => user.Id == userId);
                 Chatroom room = await _context.Chatroom.SingleOrDefaultAsync(room => room.ChatroomId == Convert.ToInt32(chatroomId));
-                Message message = new Message();
-                message.UserId = currentUser.Id;
-                message.Username = currentUser.UserName;
-                message.Sent = DateTime.Now;
-                message.Text = messageText;
-                message.ChatroomId = room.ChatroomId;
-                message.Sender = currentUser;
-                message.Room = room;
+                Message message = new Message(text, DateTime.Now, currentUser, room);
 
                 _context.Message.Add(message);
                 room.Messages.Add(message);
                 await _context.SaveChangesAsync();
 
-                MessageVM messagevm = new MessageVM();
-                messagevm.UserId = message.UserId;
-                messagevm.Username = message.Username;
-                messagevm.Sent = message.Sent;
-                messagevm.Text = message.Text;
-                messagevm.ChatroomId = message.ChatroomId.ToString();
+                MessageVM messagevm = new MessageVM(message.Text, message.Sent, message.ChatroomId.ToString(), message.UserId, message.Username);
 
                 await Clients.Group(room.ChatroomId.ToString()).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(messagevm));
             }
@@ -117,20 +105,13 @@ namespace SignalRChat.Hubs
             try
             {
                 Chatroom room = await _context.Chatroom.SingleOrDefaultAsync(room => room.ChatroomId == Convert.ToInt32(chatroomId));
-                Message message = new Message();
-                message.Sent = DateTime.Now;
-                message.ChatroomId = room.ChatroomId;
-                message.Room = room;
-                message.Text = text;
+                Message message = new Message(text, DateTime.Now, room);
 
                 _context.Message.Add(message);
                 room.Messages.Add(message);
                 await _context.SaveChangesAsync();
 
-                MessageVM messagevm = new MessageVM();
-                messagevm.Sent = message.Sent;
-                messagevm.Text = message.Text;
-                messagevm.ChatroomId = message.ChatroomId.ToString();
+                MessageVM messagevm = new MessageVM(message.Text, message.Sent, message.ChatroomId.ToString());
 
                 await Clients.Group(room.ChatroomId.ToString()).SendAsync("ReceiveMessage", JsonConvert.SerializeObject(messagevm));
                 if(newAdmin) await Clients.User(room.AdminId).SendAsync("GrantAdminPrivileges", room.ChatroomId);
@@ -166,9 +147,7 @@ namespace SignalRChat.Hubs
                 AppUser blockedUser = _context.AppUser.Where(u => u.UserName == username).FirstOrDefault();
                 Chatroom room = await _context.Chatroom.Include(c => c.Members).SingleAsync(c => c.ChatroomId == Convert.ToInt32(chatroomId));
                 room.Members.Remove(blockedUser);
-                BlockedUsers blockedUserRecord = new BlockedUsers();
-                blockedUserRecord.ChatroomId = Convert.ToInt32(chatroomId);
-                blockedUserRecord.UserId = blockedUser.Id;
+                BlockedUsers blockedUserRecord = new BlockedUsers(blockedUser.Id, Convert.ToInt32(chatroomId));
                 _context.BlockedUsers.Add(blockedUserRecord);
                 await _context.SaveChangesAsync();
 
