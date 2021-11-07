@@ -119,27 +119,12 @@ namespace ChatApp.Controllers
         [HttpPost]
         public async Task<JsonResult> AutoCompleteChatroom(string prefix, string userId)
         {
-            var currentUserId = _userManager.GetUserId(User);
-            List<Chatroom> returnList = new List<Chatroom>();
             List<Chatroom> chatrooms = await _context.Chatroom
                 .Include(Chatroom => Chatroom.Members)
                 .Where(Chatroom => Chatroom.ChatroomName.StartsWith(prefix) && Chatroom.IsPublic == true)
                 .ToListAsync();
-            foreach(Chatroom chatroom in chatrooms)
-            {
-                bool userIsMember = false;
-                foreach(AppUser member in chatroom.Members)
-                {
-                    if(member.Id == userId)
-                    {
-                        userIsMember = true;
-                        break;
-                    }
-                }
-                if (userIsMember == false)
-                    returnList.Add(chatroom);
-            }
-            return Json(returnList);
+            chatrooms.RemoveAll(c => c.Members.Any(m => m.Id == userId) || (_context.BlockedUsers.Any(b => b.UserId == userId && b.ChatroomId == c.ChatroomId)));
+            return Json(chatrooms);
         }
 
         //join chatroom accept chatroom id and user id return chatroom json result

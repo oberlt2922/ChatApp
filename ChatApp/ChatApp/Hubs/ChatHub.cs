@@ -169,6 +169,8 @@ namespace SignalRChat.Hubs
                 BlockedUsers blockedUserRecord = new BlockedUsers();
                 blockedUserRecord.ChatroomId = Convert.ToInt32(chatroomId);
                 blockedUserRecord.UserId = blockedUser.Id;
+                _context.BlockedUsers.Add(blockedUserRecord);
+                await _context.SaveChangesAsync();
 
                 await Clients.User(blockedUser.Id).SendAsync("BlockUser", room.ChatroomId);
 
