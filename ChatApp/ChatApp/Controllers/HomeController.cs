@@ -121,9 +121,10 @@ namespace ChatApp.Controllers
         {
             List<Chatroom> chatrooms = await _context.Chatroom
                 .Include(Chatroom => Chatroom.Members)
-                .Where(Chatroom => Chatroom.ChatroomName.StartsWith(prefix) && Chatroom.IsPublic == true)
+                .Where(Chatroom => Chatroom.ChatroomName.StartsWith(prefix) 
+                    && Chatroom.IsPublic == true 
+                    && !(Chatroom.Members.Any(m => m.Id == userId) || (_context.BlockedUsers.Any(b => b.UserId == userId && b.ChatroomId == Chatroom.ChatroomId))))
                 .ToListAsync();
-            chatrooms.RemoveAll(c => c.Members.Any(m => m.Id == userId) || (_context.BlockedUsers.Any(b => b.UserId == userId && b.ChatroomId == c.ChatroomId)));
             return Json(chatrooms);
         }
 
