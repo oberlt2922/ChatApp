@@ -19,6 +19,8 @@ namespace ChatApp.Models
         public virtual List<AppUser> Members { get; set; }
         public virtual List<Message> Messages { get; set; }
 
+        public Chatroom() { }
+
         public Chatroom(string chatroomName, string adminId, bool isPublic, List<AppUser> members, List<Message> messages)
         {
             this.ChatroomName = chatroomName;

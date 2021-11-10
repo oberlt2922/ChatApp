@@ -39,6 +39,6 @@
 			
 	
 //CURRENT TASKS
-	choose new admin based on most messages
+	change the return object in leavechatroom to have one prop named deleted when the chatroom is deleted
 		
 			

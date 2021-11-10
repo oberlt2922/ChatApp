@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "fjF6mDTlK+AuFGdEh3qlQIco1yu/mIcdwrifctsCmWPYLzmg+g7FSqUxLSc3CcUFr+nhxj1pETrKmV09pk8gEg==",
+  "dgSpecHash": "NGfHmmxZgBMYydTkw8jP7my4uMdJ+6sGfyvorGlqlRvPt9ta6JACpp8UXuEoqRSzy/lp+ADCQz/KpQ3yC06eSA==",
   "success": true,
   "projectFilePath": "C:\\Users\\oberl\\Documents\\GitHub\\ChatApp\\ChatApp\\ChatApp\\ChatApp.csproj",
   "expectedPackageFiles": [
@@ -139,7 +139,8 @@
     "C:\\Users\\oberl\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
     "C:\\Users\\oberl\\.nuget\\packages\\system.xml.xdocument\\4.3.0\\system.xml.xdocument.4.3.0.nupkg.sha512",
     "C:\\Users\\oberl\\.nuget\\packages\\system.xml.xmldocument\\4.3.0\\system.xml.xmldocument.4.3.0.nupkg.sha512",
-    "C:\\Users\\oberl\\.nuget\\packages\\system.xml.xmlserializer\\4.3.0\\system.xml.xmlserializer.4.3.0.nupkg.sha512"
+    "C:\\Users\\oberl\\.nuget\\packages\\system.xml.xmlserializer\\4.3.0\\system.xml.xmlserializer.4.3.0.nupkg.sha512",
+    "C:\\Users\\oberl\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\5.0.12\\microsoft.netcore.app.host.win-x64.5.0.12.nupkg.sha512"
   ],
   "logs": []
 }

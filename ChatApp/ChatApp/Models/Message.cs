@@ -21,6 +21,8 @@ namespace ChatApp.Models
         public int ChatroomId { get; set; }
         public virtual Chatroom Room { get; set; }
 
+        public Message() { }
+
         public Message(string text, DateTime sent, Chatroom room)
         {
             this.Text = text;
