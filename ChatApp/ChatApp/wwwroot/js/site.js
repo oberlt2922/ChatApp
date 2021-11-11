@@ -7,6 +7,8 @@ $(document).ready(function () {
     var currentUsername = $('#active_username').val();
     var mcsContainerHeight;
     var activeChatroomId;
+    var startPos;
+    var attached;
 
 
     //add custom scrollbar to chatroom list when page is loaded
@@ -130,6 +132,7 @@ $(document).ready(function () {
     //Calls displayMessage for every message in the chatroom.
     //Automatically scrolls down to the bottom of the chatroom when initially displayed.
     function displayChatroom(chatroom) {
+        attached = true;
         $('.msg_card_body').mCustomScrollbar("destroy");
         displayActionIcons(chatroom.adminId, chatroom.isPublic);
         activeChatroomId = chatroom.chatroomId;
@@ -145,12 +148,23 @@ $(document).ready(function () {
                 },
                 onUpdate: function () {
                     if (this.mcs) {
-                        if (this.mcs.top - $('.msg_card_body').height() === mcsContainerHeight * -1) {
+                        /*if (this.mcs.top - $('.msg_card_body').height() === mcsContainerHeight * -1) {
+                            $(this).mCustomScrollbar("scrollTo", "bottom");
+                        }*/
+                        if (attached) {
                             $(this).mCustomScrollbar("scrollTo", "bottom");
                         }
                     }
                 },
                 whileScrolling: function () {
+                    if (this.mcs.top > startPos && startPos != "") {
+                        attached = false;
+                        $('#scroll_down_btn').show();
+                    }
+                    startPos = "";
+                },
+                onScrollStart: function () {
+                    startPos = this.mcs.top;
                 }
             }
         });
@@ -519,6 +533,13 @@ $(document).ready(function () {
             event.preventDefault();
             $('#send-msg-btn').click();
         }
+    });
+
+    //Scrolls to the bottom of the chatroom and enables auto scrolling
+    $('#scroll_down_btn').on('click', function (event) {
+        attached = true;
+        $('.msg_card_body').mCustomScrollbar("scrollTo", "bottom");
+        $('#scroll_down_btn').hide();
     })
 
     //delete chatroom

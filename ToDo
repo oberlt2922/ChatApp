@@ -26,10 +26,6 @@
 	check for repeated code
 	try to fix self referencing loop error and get rid of message view model in chathub.cs methods
 	concurrency exceptions
-	malihu custom scrollbar does not automatically scroll down when multiple messages in the same chatroom are received at the same time.
-		attached to bottom variable to determine if the chatroom should automatically scroll down when messages are received
-		if when the user scrolls up, the attached to bottom variable should be set to false and a icon that says "scroll to bottom" should be displayed
-		when the icon is clicked, the attached to bottom var should be set to true and the chatroom should scroll down.
 	when inviting users, dont add blocked users
 	Firefox error:	
 		XML Parsing Error: no root element found
@@ -39,5 +35,9 @@
 			
 	
 //CURRENT TASKS
+	BUG
+		scroll to bottom button is only displayed when scrolling up via the slider
+		clicking above the slider scrolls up but does not display the scroll to bottom button and does not disable auto scrolling
+
 		
 			
