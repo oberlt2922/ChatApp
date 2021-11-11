@@ -148,7 +148,8 @@ namespace ChatApp.Controllers
             if(chatroom.Members.Count == 1)
             {
                 DeleteChatroom(chatroom.ChatroomId);
-                return Json(new {adminChanged = "", adminId = ""});
+                //return Json(new {adminChanged = "", adminId = ""});
+                return Json(new { deleted = true });
             }
             if(chatroom.AdminId == currentUser.Id)
             {

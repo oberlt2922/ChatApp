@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "6dfe2928-62d3-43ab-af09-4ccf6cfefe3a": {
+      "ProjectGuid": "6dfe2928-62d3-43ab-af09-4ccf6cfefe3a",
+      "DisplayName": "ChatApp",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}

@@ -333,7 +333,7 @@ $(document).ready(function () {
             connection.invoke('RemoveCurrentUserFromGroup', activeChatroomId.toString()).catch(function (err) {
                 return console.error(err.toString());
             });
-            if (result.adminChanged !== "" && result.adminId !== "") {
+            if (!result.deleted) {
                 if (result.adminChanged == false) {
                     var text = currentUsername + ' left the chatroom.';
                     connection.invoke('SendNonUserMessage', text, activeChatroomId.toString(), currentUserId, false).catch(function (err) {
