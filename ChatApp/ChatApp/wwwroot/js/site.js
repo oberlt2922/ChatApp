@@ -513,6 +513,14 @@ $(document).ready(function () {
         }
     });
 
+    //clicks the send message button when the enter key is pressed
+    $(document).keypress(function (event) {
+        if (event.which == 13) {
+            event.preventDefault();
+            $('#send-msg-btn').click();
+        }
+    })
+
     //delete chatroom
     $('#action_menu_list').on('click', '#delete_chatroom_li', function (event) {
         event.stopPropagation();
