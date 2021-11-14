@@ -9,11 +9,11 @@ namespace ChatApp.Models
     public class Chatroom
     {
         public int ChatroomId { get; set; }
-        [Required]
-        [MaxLength(40)]
+        [Required (ErrorMessage = "Chatroom Name is required")]
+        [MaxLength(40, ErrorMessage = "Chatroom Name cannot be more than 40 characters long")]
         public string ChatroomName { get; set; }
         public string AdminId { get; set; }
-        [Required]
+        [Required (ErrorMessage = "Please select either \"Public\" or \"Private\"")]
         public bool IsPublic { get; set; }
 
         public virtual List<AppUser> Members { get; set; }
