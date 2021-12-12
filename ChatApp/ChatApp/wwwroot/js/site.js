@@ -141,9 +141,6 @@ $(document).ready(function () {
                 },
                 onUpdate: function () {
                     if (this.mcs) {
-                        /*if (this.mcs.top - $('.msg_card_body').height() === mcsContainerHeight * -1) {
-                            $(this).mCustomScrollbar("scrollTo", "bottom");
-                        }*/
                         if (attached) {
                             $(this).mCustomScrollbar("scrollTo", "bottom");
                         }
@@ -154,7 +151,6 @@ $(document).ready(function () {
                         attached = false;
                         $('#scroll_down_btn').show();
                     }
-                    startPos = "";
                 },
                 onScrollStart: function () {
                     startPos = this.mcs.top;
