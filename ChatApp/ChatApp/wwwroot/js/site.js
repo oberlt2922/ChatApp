@@ -33,14 +33,7 @@ $(document).ready(function () {
     //the chatroom is fetched from the database and added to the chatroom list.
     //The chatroom is set to active inside addChatroomToList() ONLY IF THE CURRENT USER IS THE CHATROOM ADMIN
     connection.on("AddNewChatroomToList", function (chatroomId) {
-        $.ajax({
-            type: 'POST',
-            url: '../Home/GetChatroom',
-            data: { 'chatroomId': chatroomId },
-            dataType: 'json'
-        }).done(function (result) {
-            addChatroomToList(result, false);
-        });
+        getChatroom(chatroomId).then(result => addChatroomToList(result, false));
     });
 
     //Receive a message and display it in the chatroom
@@ -262,7 +255,7 @@ $(document).ready(function () {
     //Gets the chatroom and displays it in the chatroom panel.
     function getChatroom(id) {
         return $.ajax({
-            type: 'POST',
+            type: 'GET',
             url: '../Home/GetChatroom',
             data: { 'chatroomId': id },
             dataType: 'json'
@@ -274,14 +267,15 @@ $(document).ready(function () {
         $.ajax({
             type: 'POST',
             url: '../Home/CreateChatroom',
-            data: { 'isPublic': isPublic, 'chatroomName': chatroomName, 'usernames': usernames },
+            data: { 'isPublic': isPublic, 'chatroomName': chatroomName, 'usernames': [...new Set(usernames)] },
             datatype: 'json'
         }).done(function (result) {
-            var members = JSON.stringify(result.members);
-            connection.invoke('AddMembersToGroup', result.chatroomId.toString(), members).catch(function (err) {
+            connection.invoke('AddMembersToGroup', result.chatroomId.toString(), JSON.stringify(result.members)).catch(function (err) {
                 return console.error(err.toString());
             });
             displayChatroom(result);
+        }).fail(function (jqXHR, textStatus) {
+            $.alert({ title: textStatus, content: jqXHR.status + ' Error!', type: 'red' });
         });
     }
 
@@ -290,7 +284,7 @@ $(document).ready(function () {
         $.ajax({
             type: 'POST',
             url: '../Home/AddMembers',
-            data: { 'chatroomId': chatroomId, 'usernames': usernames },
+            data: { 'chatroomId': chatroomId, 'usernames': [...new Set(usernames)] },
             datatype: 'json'
         }).done(function (result) {
             $.each(result.members, function (index, member) {
@@ -302,6 +296,8 @@ $(document).ready(function () {
             connection.invoke('AddMembersToGroup', result.chatroomId.toString(), JSON.stringify(result.members)).catch(function (err) {
                 return console.error(err.toString());
             });
+        }).fail(function (jqXHR, textStatus) {
+            $.alert({ title: textStatus, content: jqXHR.status + ' Error!', type: 'red' });
         });
     }
 
@@ -311,14 +307,17 @@ $(document).ready(function () {
     //and the chatroom is not displayed so that the user's current activity is not disrupted.
     //Adds the joined chatroom to the chatroom list
     function joinChatroom(chatroomId, display) {
-        $.ajax({
+        return $.ajax({
             type: 'POST',
             url: '../Home/JoinChatroom',
             data: { 'chatroomId': chatroomId },
             datatype: 'json'
         }).done(function (result) {
-            connection.invoke('AddCurrentUserToGroup', result.chatroomId.toString()).catch(function (err) {
-                return console.error(err.toString());
+            var text = currentUsername + ' has joined the chatroom.';
+            connection.invoke('AddCurrentUserToGroup', result.chatroomId.toString()).then(function () {
+                connection.invoke('SendNonUserMessage', text, chatroomId.toString(), currentUserId, false);
+            }).catch(function (err) {
+                $.alert({ title: 'error', content: 'An error occured while trying to connect to the group, try refreshing the page.', type: 'red' });
             });
             if (display == true) {
                 $('.active').removeClass('active');
@@ -328,6 +327,8 @@ $(document).ready(function () {
             else {
                 addChatroomToList(result, false);
             }
+        }).fail(function (jqXHR, textStatus) {
+            $.alert({ title: textStatus, content: jqXHR.status + ' Error!', type: 'red' });
         });
     }
 
@@ -362,6 +363,8 @@ $(document).ready(function () {
                 }
             }
             removeChatroom(activeChatroomId);
+        }).fail(function (jqXHR, textStatus) {
+            $.alert({ title: textStatus, content: jqXHR.status + ' Error!', type: 'red' });
         });
     }
 
@@ -376,6 +379,20 @@ $(document).ready(function () {
             connection.invoke('RemoveChatroom', chatroomId.toString(), currentUserId).catch(function (err) {
                 return console.error(err.toString());
             });
+        }).fail(function (jqXHR, textStatus) {
+            $.alert({ title: textStatus, content: jqXHR.status + ' Error!', type: 'red' });
+        });
+    }
+
+    //checks if user exista
+    function userExists(username) {
+        return$.ajax({
+            type: 'GET',
+            url: '../Home/UserExists',
+            data: { 'username': username },
+            dataType: 'json'
+        }).fail(function (jqXHR, textStatus) {
+            $.alert({ title: textStatus, content: jqXHR.status + ' Error!', type: 'red' });
         });
     }
 
@@ -387,7 +404,7 @@ $(document).ready(function () {
     $("#txtSearchChatrooms").autocomplete({
         source: function (request, response) {
             $.ajax({
-                type: 'POST',
+                type: 'GET',
                 url: '../Home/AutoCompleteChatroom',
                 cache: false,
                 data: { 'prefix': request.term, 'userId': currentUserId },
@@ -412,14 +429,7 @@ $(document).ready(function () {
                 content: 'You are about to to join the chatroom \"' + ui.item.data.chatroomName + '\".',
                 buttons: {
                     confirm: function () {
-                        var text = currentUsername + ' has joined the chatroom.';
-                        connection.invoke('SendNonUserMessage', text, ui.item.data.chatroomId.toString(), currentUserId, false)
-                            .then(function () {
-                                joinChatroom(ui.item.data.chatroomId, true);
-                            })
-                            .catch(function (err) {
-                                return console.error(err.toString());
-                            });
+                        joinChatroom(ui.item.data.chatroomId, true);
                     },
                     cancel: function () {
                         $.alert('Canceled!');

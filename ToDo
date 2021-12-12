@@ -31,6 +31,19 @@
 	BUG
 		scroll to bottom button is only displayed when scrolling up via the slider
 		clicking above the slider scrolls up but does not display the scroll to bottom button and does not disable auto scrolling
-
 		
+		add error messages
+		on focusout call UserExists
+			if user does not exis, display the respective error message and set valid to false
+		on create btn click check if valid
+		
+		
+		handle failures on
+			getChatroom
+			createChatroom
+			addMembers
+			joinChatroom
+			leaveChatroom
+			deleteChatroom
+			userExists
 			

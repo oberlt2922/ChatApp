@@ -56,22 +56,39 @@ namespace ChatApp.Controllers
         /// <param name="usernames">An array of the usernames that the creator of the chatroom entered</param>
         /// <returns>Returns the created chatroom as json object</returns>
         [HttpPost]
-        public async Task<JsonResult> CreateChatroom(string isPublic, string chatroomName, string[] usernames)
+        public async Task<IActionResult> CreateChatroom(string isPublic, string chatroomName, string[] usernames)
         {
-            AppUser currentUser = await _userManager.GetUserAsync(User);
-            Chatroom room = new Chatroom(chatroomName, currentUser.Id, isPublic == "Public" ? true: false, new List<AppUser>(), new List<Message>());
-            room.Members.Add(currentUser);
-            foreach (string user in usernames)
+            try
             {
-                AppUser member = await _context.AppUser.SingleOrDefaultAsync(a => a.UserName == user);
-                if (member != null)
+                if (string.IsNullOrEmpty(isPublic) || string.IsNullOrEmpty(chatroomName))
                 {
-                    room.Members.Add(member);
+                    return BadRequest();
                 }
+
+                AppUser currentUser = await _userManager.GetUserAsync(User);
+                if(currentUser == null)
+                {
+                    throw new Exception();
+                }
+
+                Chatroom room = new Chatroom(chatroomName, currentUser.Id, isPublic == "Public" ? true : false, new List<AppUser>(), new List<Message>());
+                room.Members.Add(currentUser);
+                foreach (string user in usernames)
+                {
+                    AppUser member = await _context.AppUser.SingleOrDefaultAsync(a => a.UserName == user);
+                    if (member != null)
+                    {
+                        room.Members.Add(member);
+                    }
+                }
+                _context.Chatroom.Add(room);
+                _context.SaveChanges();
+                return GetChatroom(room.ChatroomId.ToString());
             }
-            _context.Chatroom.Add(room);
-            _context.SaveChanges();
-            return GetChatroom(room.ChatroomId.ToString());
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
         }
 
         /// <summary>
@@ -81,100 +98,231 @@ namespace ChatApp.Controllers
         /// <param name="members">The usernames of the members being added to the chatroom</param>
         /// <returns>Returns the chatroom id and the new members' ids as json object</returns>
         [HttpPost]
-        public async Task<JsonResult> AddMembers(string chatroomId, string[] usernames)
+        public async Task<IActionResult> AddMembers(string chatroomId, string[] usernames)
         {
-            Chatroom room = _context.Chatroom.Where(c => c.ChatroomId == Convert.ToInt32(chatroomId))
-                .Include(c => c.Members).Single();
-            var returnObject = new { chatroomId = chatroomId, members = new List<AppUser>() };
-            foreach (string user in usernames)
+            try
             {
-                AppUser member = await _context.AppUser.SingleOrDefaultAsync(a => a.UserName == user);
-                if (member != null)
+                if (string.IsNullOrEmpty(chatroomId) || usernames.Length == 0)
                 {
-                    returnObject.members.Add(member);
-                    room.Members.Add(member);
+                    return BadRequest();
                 }
+
+                Chatroom room = _context.Chatroom.Where(c => c.ChatroomId == Convert.ToInt32(chatroomId))
+                    .Include(c => c.Members).Single();
+
+                if (room == null)
+                {
+                    return NotFound();
+                }
+
+                var returnObject = new { chatroomId = chatroomId, members = new List<AppUser>() };
+                foreach (string user in usernames)
+                {
+                    AppUser member = await _context.AppUser.SingleOrDefaultAsync(a => a.UserName == user);
+                    if (member != null)
+                    {
+                        returnObject.members.Add(member);
+                        room.Members.Add(member);
+                    }
+                }
+                _context.SaveChanges();
+                return Ok(returnObject);
             }
-            _context.SaveChanges();
-            return Json(returnObject);
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
         }
 
         //Fetches and returns the chatroom as Json
-        [HttpPost]
-        public JsonResult GetChatroom(string chatroomId)
+        [HttpGet]
+        public IActionResult GetChatroom(string chatroomId)
         {
-            Chatroom chatroom = _context.Chatroom
-                .Include(Chatroom => Chatroom.Messages.OrderBy(Message => Message.Sent))
-                .Include(Chatroom => Chatroom.Members)
-                .Single(Chatroom => Chatroom.ChatroomId == Convert.ToInt32(chatroomId));
-            return Json(chatroom);
+            try
+            {
+                if (string.IsNullOrEmpty(chatroomId))
+                {
+                    return BadRequest();
+                }
+
+                Chatroom chatroom = _context.Chatroom
+                    .Include(Chatroom => Chatroom.Messages.OrderBy(Message => Message.Sent))
+                    .Include(Chatroom => Chatroom.Members)
+                    .Single(Chatroom => Chatroom.ChatroomId == Convert.ToInt32(chatroomId));
+
+                if (chatroom == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(chatroom);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
         }
 
         //get chatrooms by prefix where chatroom is public and user is not already a member
-        [HttpPost]
-        public async Task<JsonResult> AutoCompleteChatroom(string prefix, string userId)
+        [HttpGet]
+        public async Task<IActionResult> AutoCompleteChatroom(string prefix, string userId)
         {
-            List<Chatroom> chatrooms = await _context.Chatroom
-                .Include(Chatroom => Chatroom.Members)
-                .Where(Chatroom => Chatroom.ChatroomName.StartsWith(prefix) 
-                    && Chatroom.IsPublic == true 
-                    && !(Chatroom.Members.Any(m => m.Id == userId) || (_context.BlockedUsers.Any(b => b.UserId == userId && b.ChatroomId == Chatroom.ChatroomId))))
-                .ToListAsync();
-            return Json(chatrooms);
+            try
+            {
+                if(string.IsNullOrEmpty(userId))
+                {
+                    return BadRequest();
+                }
+
+                List<Chatroom> chatrooms = await _context.Chatroom
+                        .Include(Chatroom => Chatroom.Members)
+                        .Where(Chatroom => Chatroom.ChatroomName.StartsWith(prefix)
+                            && Chatroom.IsPublic == true
+                            && !(Chatroom.Members.Any(m => m.Id == userId) || (_context.BlockedUsers.Any(b => b.UserId == userId && b.ChatroomId == Chatroom.ChatroomId))))
+                        .ToListAsync();
+                return Json(chatrooms);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
         }
 
         //join chatroom accept chatroom id and user id return chatroom json result
-        public async Task<JsonResult> JoinChatroom(string chatroomId)
+        [HttpPost]
+        public async Task<IActionResult> JoinChatroom(string chatroomId)
         {
-            Chatroom chatroom = _context.Chatroom
-                .Include(Chatroom => Chatroom.Messages.OrderBy(Message => Message.Sent))
-                .Include(Chatroom => Chatroom.Members)
-                .Single(Chatroom => Chatroom.ChatroomId == Convert.ToInt32(chatroomId));
-            AppUser currentUser = await _userManager.GetUserAsync(User);
-            chatroom.Members.Add(currentUser);
-            _context.SaveChanges();
-            return Json(chatroom);
+            try
+            {
+                if (string.IsNullOrEmpty(chatroomId))
+                {
+                    return BadRequest();
+                }
+
+                Chatroom chatroom = _context.Chatroom
+                    .Include(Chatroom => Chatroom.Messages.OrderBy(Message => Message.Sent))
+                    .Include(Chatroom => Chatroom.Members)
+                    .Single(Chatroom => Chatroom.ChatroomId == Convert.ToInt32(chatroomId));
+
+                if (chatroom == null)
+                {
+                    return NotFound();
+                }
+
+                AppUser currentUser = await _userManager.GetUserAsync(User);
+
+                if(currentUser == null)
+                {
+                    throw new Exception();
+                }
+
+                chatroom.Members.Add(currentUser);
+                _context.SaveChanges();
+                return Json(chatroom);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500);
+            }
         }
 
         //leave chatroom and choose new admin if current user is admin
-        public async Task<JsonResult> LeaveChatroom(string chatroomId)
+        [HttpPost]
+        public async Task<IActionResult> LeaveChatroom(string chatroomId)
         {
-            Chatroom chatroom = await _context.Chatroom
-                .Include(Chatroom => Chatroom.Members)
-                .SingleAsync(Chatroom => Chatroom.ChatroomId == Convert.ToInt32(chatroomId));
-            AppUser currentUser = await _userManager.GetUserAsync (User);
-            bool adminChanged = false;
-            string adminUsername = "";
-            if(chatroom.Members.Count == 1)
+            try
             {
-                DeleteChatroom(chatroom.ChatroomId);
-                //return Json(new {adminChanged = "", adminId = ""});
-                return Json(new { deleted = true });
+                if (string.IsNullOrEmpty(chatroomId))
+                {
+                    return BadRequest();
+                }
+
+                Chatroom chatroom = await _context.Chatroom
+                    .Include(Chatroom => Chatroom.Members).
+                        ThenInclude(m => m.Messages).
+                    SingleAsync(Chatroom => Chatroom.ChatroomId == Convert.ToInt32(chatroomId));
+
+                if (chatroom == null)
+                {
+                    return NotFound();
+                }
+
+                AppUser currentUser = await _userManager.GetUserAsync(User);
+                bool adminChanged = false;
+                string adminUsername = "";
+
+                if (chatroom.Members.Count == 1)
+                {
+                    DeleteChatroom(chatroom.ChatroomId.ToString());
+                    return Ok(new { deleted = true });
+                }
+                if (chatroom.AdminId == currentUser.Id)
+                {
+                    adminChanged = true;
+                    var newAdmin = chatroom.Members.
+                        Where(m => m.Id != chatroom.AdminId).
+                        Select(m => new { UserId = m.Id, count = m.Messages.Where(msg => msg.ChatroomId == chatroom.ChatroomId).Count() }).
+                        OrderByDescending(g => g.count).
+                        First();
+                    chatroom.AdminId = newAdmin.UserId;
+                    adminUsername = _context.AppUser.Where(a => a.Id == newAdmin.UserId).Select(u => u.UserName).Single();
+
+                    if (newAdmin == null || adminUsername == null)
+                    {
+                        throw new Exception();
+                    }
+                }
+
+                var returnObject = new { adminChanged = adminChanged, adminId = chatroom.AdminId, adminUsername = adminUsername };
+                chatroom.Members.Remove(currentUser);
+                await _context.SaveChangesAsync();
+                return Ok(returnObject);
             }
-            if(chatroom.AdminId == currentUser.Id)
+            catch (Exception ex)
             {
-                adminChanged = true;
-                var newAdmin = await _context.Message.
-                    Where(m => m.UserId != null && m.ChatroomId == Convert.ToInt32(chatroomId) && chatroom.Members.Contains(m.Sender) && m.UserId != chatroom.AdminId).
-                    GroupBy(m => m.UserId).
-                    Select(g => new { UserId = g.Key, count = g.Count() }).
-                    OrderByDescending(g => g.count).
-                    FirstAsync();
-                chatroom.AdminId = newAdmin.UserId;
-                adminUsername = _context.AppUser.Where(a => a.Id == newAdmin.UserId).Select(u => u.UserName).Single();
+                return StatusCode(500);
             }
-            var returnObject = new { adminChanged = adminChanged, adminId = chatroom.AdminId, adminUsername = adminUsername };
-            chatroom.Members.Remove(currentUser);
-            await _context.SaveChangesAsync();
-            return Json(returnObject);
         }
 
         //delete chatroom
-        public void DeleteChatroom(int chatroomId)
+        [HttpPost]
+        public IActionResult DeleteChatroom(string chatroomId)
         {
-            Chatroom chatroom = _context.Chatroom.Include(c => c.Messages).Single(c => c.ChatroomId == chatroomId);
-            _context.Remove(chatroom);
-            _context.SaveChanges();
+            try
+            {
+                if(string.IsNullOrEmpty(chatroomId))
+                {
+                    return BadRequest();
+                }
+                Chatroom chatroom = _context.Chatroom.Include(c => c.Messages).Single(c => c.ChatroomId == Convert.ToInt32(chatroomId));
+                if (chatroom == null) return NotFound();
+                _context.Remove(chatroom);
+                _context.SaveChanges();
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500);
+            }
+        }
+
+        //check if user exists by username
+        [HttpGet]
+        public async Task<IActionResult> UserExists(string username)
+        {
+            if (string.IsNullOrEmpty(username))
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                return Ok(new { Exists = await _context.AppUser.AnyAsync(a => a.UserName == username) });
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500);
+            }
         }
 
 
