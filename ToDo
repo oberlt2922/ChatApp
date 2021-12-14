@@ -26,6 +26,7 @@
 	unblock chatroom
 	unblock users from chatroom
 	encrypt messages
+	signalr errors
 			
 	
 //CURRENT TASKS
